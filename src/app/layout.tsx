@@ -21,6 +21,15 @@ export const metadata: Metadata = {
     default: 'Butik Fırın - Ev Yapımı Lezzetler',
     template: '%s | Butik Fırın'
   },
+  
+  // Viewport configuration for iOS Safari modal fix
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+    viewportFit: 'cover'
+  },
   description: 'Butik Fırın - Ev yapımı taze pastalar, kekler, kurabiyeler ve özel günler için muhteşem tatlılar',
   keywords: ['butik fırın', 'pasta', 'kek', 'kurabiye', 'tatlı', 'ev yapımı', 'taze', 'doğum günü pastası', 'özel sipariş'],
   authors: [{ name: 'Butik Fırın Ekibi' }],

@@ -27,6 +27,7 @@ import Link from 'next/link'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import usePreventScroll from '@/hooks/usePreventScroll'
+import { ModalPortal } from '@/components/ui/modal-portal'
 
 // 2025 Animations
 const fadeInUp = {
@@ -1114,9 +1115,10 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Product Detail Modal - iOS Safari Optimized */}
-      <AnimatePresence mode="wait">
-        {selectedProduct && (
+      {/* Product Detail Modal - iOS Safari Optimized with Portal */}
+      <ModalPortal isOpen={!!selectedProduct}>
+        <AnimatePresence mode="wait">
+          {selectedProduct && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -1238,8 +1240,9 @@ export default function HomePage() {
               </div>
             </motion.div>
           </motion.div>
-        )}
-      </AnimatePresence>
+          )}
+        </AnimatePresence>
+      </ModalPortal>
     </div>
   )
 }
