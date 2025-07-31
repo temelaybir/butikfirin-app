@@ -45,6 +45,8 @@ export async function POST(request: NextRequest) {
         button_link: body.button_link,
         alt_text: body.alt_text,
         is_active: body.is_active ?? true,
+        is_raw_image: body.is_raw_image ?? false,
+        show_on_mobile: body.show_on_mobile ?? true,
         display_order: body.display_order ?? 0
       })
       .select()
@@ -91,6 +93,8 @@ export async function PUT(request: NextRequest) {
         button_link: body.button_link,
         alt_text: body.alt_text,
         is_active: body.is_active,
+        is_raw_image: body.is_raw_image ?? false,
+        show_on_mobile: body.show_on_mobile ?? true,
         display_order: body.display_order
       })
       .eq('id', id)
