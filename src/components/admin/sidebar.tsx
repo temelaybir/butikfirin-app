@@ -95,8 +95,8 @@ const menuItems = [
     icon: CreditCard
   },
   {
-    title: 'Banner Yönetimi',
-    href: '/admin/hero-slider',
+    title: 'Hero Banner',
+    href: '/admin/hero-banners',
     icon: Monitor
   },
   {

@@ -54,8 +54,12 @@ const mainLoyaltyMessages = [
 export default function HomePage() {
   const [baseCategories] = useState(() => getActiveCategories())
   const [allProducts] = useState(() => getFeaturedProducts())
-  const [heroSlides, setHeroSlides] = useState<any[]>([])
   const [bottomSlides, setBottomSlides] = useState<any[]>([])
+  const [heroBanners, setHeroBanners] = useState<any>({
+    main: null,
+    side1: null,
+    side2: null
+  })
 
   // Add "All Products" category at the beginning
   const categories = [
@@ -76,7 +80,35 @@ export default function HomePage() {
 
   const { addToCart } = useCart()
 
-  // Load hero slides from API
+  // Load hero banners from API
+  const loadHeroBanners = async () => {
+    try {
+      const response = await fetch('/api/admin/hero-banners')
+      if (response.ok) {
+        const data = await response.json()
+        const banners = data.banners || []
+        
+        // Banner'ları pozisyonlarına göre ayır
+        const bannerMap: any = {
+          main: null,
+          side1: null,
+          side2: null
+        }
+        
+        banners.forEach((banner: any) => {
+          if (banner.is_active && bannerMap[banner.position] === null) {
+            bannerMap[banner.position] = banner
+          }
+        })
+        
+        setHeroBanners(bannerMap)
+      }
+    } catch (error) {
+      console.error('Error loading hero banners:', error)
+    }
+  }
+
+  // Load bottom slides from API
   const loadSlides = async () => {
     try {
       // First try to load from API
@@ -85,11 +117,8 @@ export default function HomePage() {
         const data = await response.json()
         const slides = data.slides || []
 
-        // Separate slides by position
-        const topSlides = slides.filter((slide: any) => slide.order_position >= 1 && slide.order_position <= 4)
+        // Only bottom slides now
         const bottomSlidesData = slides.filter((slide: any) => slide.order_position >= 5 && slide.order_position <= 8)
-
-        setHeroSlides(topSlides)
         setBottomSlides(bottomSlidesData)
 
         // Save to localStorage for offline use
@@ -97,7 +126,7 @@ export default function HomePage() {
         return
       }
     } catch (error) {
-      console.error('Error loading hero slides from API:', error)
+      console.error('Error loading slides from API:', error)
     }
 
     // Fallback to localStorage if API fails
@@ -118,19 +147,17 @@ export default function HomePage() {
           })
           .sort((a: any, b: any) => a.order_position - b.order_position)
 
-        // Separate slides by position
-        const topSlides = activeSlides.filter((slide: any) => slide.order_position >= 1 && slide.order_position <= 4)
+        // Only bottom slides now
         const bottomSlidesData = activeSlides.filter((slide: any) => slide.order_position >= 5 && slide.order_position <= 8)
-
-        setHeroSlides(topSlides)
         setBottomSlides(bottomSlidesData)
       }
     } catch (error) {
-      console.error('Error loading hero slides from localStorage:', error)
+      console.error('Error loading slides from localStorage:', error)
     }
   }
 
   useEffect(() => {
+    loadHeroBanners()
     loadSlides()
 
     const handleResize = () => {
@@ -308,95 +335,157 @@ export default function HomePage() {
   // Final filtered products
   const finalFilteredProducts = searchQuery ? filteredSearchResults : filteredProducts
 
-  // Only show hero section if there are active slides
-  const hasActiveSlides = heroSlides.length > 0
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Hero Section - Only show if slides exist */}
-      {hasActiveSlides && (
-        <section className="w-full bg-white py-4 sm:py-6 mb-4">
-          <div className="container mx-auto px-4 max-w-7xl">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 min-h-[300px] lg:min-h-[400px]">
-              {/* Sol: Hero Büyük Banner */}
-              <div className="lg:col-span-2 h-[300px] lg:h-[400px]">
-                <div className="relative rounded-xl overflow-hidden bg-gray-100 h-full shadow-lg">
-                  {/* Hero Image with fallback */}
-                  <img
-                    src={heroSlides[0]?.image_url}
-                    alt={heroSlides[0]?.title || 'Hero Banner'}
-                    className="w-full h-full object-cover"
-                  />
-                  
-                  {/* Overlay Content */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent">
-                    <div className="absolute bottom-0 left-0 right-0 p-6 lg:p-8">
-                      <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-2">
-                        {heroSlides[0]?.title}
-                      </h2>
-                      {heroSlides[0]?.subtitle && (
-                        <p className="text-base sm:text-lg text-white/90 mb-4">
-                          {heroSlides[0].subtitle}
-                        </p>
-                      )}
-                      {heroSlides[0]?.button_text && heroSlides[0]?.link_url && (
-                        <Link href={heroSlides[0].link_url}>
-                          <Button className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2.5 text-sm font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all">
-                            {heroSlides[0].button_text}
-                          </Button>
-                        </Link>
-                      )}
-                    </div>
-                  </div>
-                </div>
+      {/* Hero Banner Section */}
+      <section className="w-full bg-white py-4 sm:py-6 mb-4">
+        <div className="container mx-auto px-4 max-w-7xl">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 min-h-[300px] lg:min-h-[400px]">
+            {/* Sol: Hero Büyük Banner */}
+            <div className="lg:col-span-2 h-[300px] lg:h-[400px]">
+              <div className="relative rounded-xl overflow-hidden bg-gray-100 h-full shadow-lg group">
+                {heroBanners.main ? (
+                  <>
+                    <img
+                      src={heroBanners.main.image_url}
+                      alt={heroBanners.main.alt_text || "Ana Banner"}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                    {(heroBanners.main.title || heroBanners.main.button_text) && (
+                      <div className="absolute bottom-0 left-0 right-0 p-6 lg:p-8">
+                        {heroBanners.main.title && (
+                          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-2">
+                            {heroBanners.main.title}
+                          </h2>
+                        )}
+                        {heroBanners.main.subtitle && (
+                          <p className="text-base sm:text-lg text-white/90 mb-4">
+                            {heroBanners.main.subtitle}
+                          </p>
+                        )}
+                        {heroBanners.main.button_text && heroBanners.main.button_link && (
+                          <Link href={heroBanners.main.button_link}>
+                            <Button className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2.5 text-sm font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all">
+                              {heroBanners.main.button_text}
+                            </Button>
+                          </Link>
+                        )}
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <img
+                      src="https://images.unsplash.com/photo-1509440159596-0249088772ff?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2072&q=80"
+                      alt="Taze Fırın Ürünleri"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+                  </>
+                )}
               </div>
+            </div>
 
-              {/* Sağ: 2 Küçük Banner */}
-              <div className="lg:col-span-1 h-[300px] lg:h-[400px]">
-                <div className="grid grid-cols-2 lg:grid-cols-1 gap-4 h-full">
-                  {heroSlides.slice(1, 3).map((slide, index) => (
-                    <div
-                      key={slide.id}
-                      className="relative rounded-xl overflow-hidden bg-gray-100 h-full shadow-lg"
-                    >
-                      {/* Banner Image */}
+            {/* Sağ: 2 Küçük Banner */}
+            <div className="lg:col-span-1 h-[300px] lg:h-[400px]">
+              <div className="grid grid-rows-2 gap-4 h-full">
+                {/* Banner 1 - Sağ Üst */}
+                <div className="relative rounded-xl overflow-hidden bg-gray-100 shadow-lg h-full group">
+                  {heroBanners.side1 ? (
+                    <>
                       <img
-                        src={slide.image_url}
-                        alt={slide.title}
-                        className="w-full h-full object-cover"
+                        src={heroBanners.side1.image_url}
+                        alt={heroBanners.side1.alt_text || "Yan Banner 1"}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
-                      
-                      {/* Overlay Content */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent">
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                      {(heroBanners.side1.title || heroBanners.side1.button_text) && (
                         <div className="absolute bottom-0 left-0 right-0 p-4">
-                          <h3 className="text-lg lg:text-xl font-bold text-white mb-1">
-                            {slide.title}
-                          </h3>
-                          {slide.subtitle && (
+                          {heroBanners.side1.title && (
+                            <h3 className="text-lg lg:text-xl font-bold text-white mb-1">
+                              {heroBanners.side1.title}
+                            </h3>
+                          )}
+                          {heroBanners.side1.subtitle && (
                             <p className="text-sm text-white/90 mb-2">
-                              {slide.subtitle}
+                              {heroBanners.side1.subtitle}
                             </p>
                           )}
-                          {slide.button_text && slide.link_url && (
-                            <Link href={slide.link_url}>
+                          {heroBanners.side1.button_text && heroBanners.side1.button_link && (
+                            <Link href={heroBanners.side1.button_link}>
                               <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-1.5 text-xs font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all">
-                                {slide.button_text}
+                                {heroBanners.side1.button_text}
                               </Button>
                             </Link>
                           )}
                         </div>
-                      </div>
-                    </div>
-                  ))}
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      <img
+                        src="https://images.unsplash.com/photo-1558961363-fa8fdf82db35?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1965&q=80"
+                        alt="Tatlılar"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+                    </>
+                  )}
+                </div>
+
+                {/* Banner 2 - Sağ Alt */}
+                <div className="relative rounded-xl overflow-hidden bg-gray-100 shadow-lg h-full group">
+                  {heroBanners.side2 ? (
+                    <>
+                      <img
+                        src={heroBanners.side2.image_url}
+                        alt={heroBanners.side2.alt_text || "Yan Banner 2"}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                      {(heroBanners.side2.title || heroBanners.side2.button_text) && (
+                        <div className="absolute bottom-0 left-0 right-0 p-4">
+                          {heroBanners.side2.title && (
+                            <h3 className="text-lg lg:text-xl font-bold text-white mb-1">
+                              {heroBanners.side2.title}
+                            </h3>
+                          )}
+                          {heroBanners.side2.subtitle && (
+                            <p className="text-sm text-white/90 mb-2">
+                              {heroBanners.side2.subtitle}
+                            </p>
+                          )}
+                          {heroBanners.side2.button_text && heroBanners.side2.button_link && (
+                            <Link href={heroBanners.side2.button_link}>
+                              <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-1.5 text-xs font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all">
+                                {heroBanners.side2.button_text}
+                              </Button>
+                            </Link>
+                          )}
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      <img
+                        src="https://images.unsplash.com/photo-1549007994-cb92caebd54b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+                        alt="Kahve"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+                    </>
+                  )}
                 </div>
               </div>
+            </div>
           </div>
         </div>
       </section>
-      )}
 
       {/* Main Menu Section - Trendyol Style */}
-      <section className="py-4 sm:py-6">
+      <section id="menu-section" className="py-4 sm:py-6">
         <div className="container mx-auto px-4 sm:px-6 max-w-7xl">
           {/* Menu Card Container */}
           <div className="bg-white rounded shadow-sm border-2 border-gray-200 overflow-hidden">
