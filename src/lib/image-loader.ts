@@ -18,6 +18,23 @@ export default function imageLoader({ src, width, quality }: {
     return src
   }
   
-  // Sadece yerel dosyaları kabul et, dış URL'leri placeholder'a çevir
+  // Unsplash URL'leri için özel işlem
+  if (src.includes('images.unsplash.com')) {
+    const url = new URL(src)
+    if (width) {
+      url.searchParams.set('w', width.toString())
+    }
+    if (quality) {
+      url.searchParams.set('q', quality.toString())
+    }
+    return url.toString()
+  }
+  
+  // Diğer dış URL'ler için doğrudan döndür
+  if (src.startsWith('http://') || src.startsWith('https://')) {
+    return src
+  }
+  
+  // Geçersiz URL'ler için placeholder
   return '/placeholder-product.svg'
 } 
