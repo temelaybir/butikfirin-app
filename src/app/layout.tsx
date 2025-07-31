@@ -7,6 +7,7 @@ import { ThemeConfigProvider } from '@/context/theme-context'
 import type { Metadata } from 'next'
 import { Inter, Poppins } from 'next/font/google'
 import './globals.css'
+import Script from 'next/script'
 
 // Font tanımlamaları
 const inter = Inter({ subsets: ['latin'] })
@@ -104,14 +105,15 @@ export default function RootLayout({
         <meta name="msapplication-tap-highlight" content="no" />
         <meta name="mobile-web-app-capable" content="yes" />
 
-        {/* Force touch-action CSS property globally */}
+        {/* Optimized touch-action CSS property */}
         <style dangerouslySetInnerHTML={{
           __html: `
+            /* Sadece tap highlight'ları kaldır */
             * { 
               -webkit-tap-highlight-color: transparent !important;
-              -webkit-touch-callout: none !important;
-              touch-action: manipulation !important;
             }
+            
+            /* Tıklanabilir öğeler için optimizasyonlar */
             a, button, [role="button"] {
               -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
               -webkit-touch-callout: none !important;
@@ -119,12 +121,74 @@ export default function RootLayout({
               touch-action: manipulation !important;
               cursor: pointer !important;
             }
-            input, textarea {
+            
+            /* Input ve textarea için doğal davranış */
+            input, textarea, select {
               touch-action: auto !important;
               -webkit-user-select: auto !important;
+              -webkit-touch-callout: default !important;
+            }
+            
+            /* Scroll area'lar için doğal scroll davranışı */
+            [data-scroll="true"], .overflow-y-auto, .overflow-auto, .scroll-area {
+              touch-action: auto !important;
+              -webkit-overflow-scrolling: touch !important;
+            }
+            
+            /* Body ve html için smooth scroll */
+            html, body {
+              scroll-behavior: smooth;
+              -webkit-overflow-scrolling: touch;
+            }
+            
+            /* Sayfa geçişlerinde scroll position korunması */
+            body {
+              position: relative;
             }
           `
         }} />
+        
+        {/* Scroll Restoration and Page Transition Optimization */}
+        <Script id="scroll-restoration" strategy="beforeInteractive">
+          {`
+            // Sayfa geçişlerinde scroll pozisyonunu kaydet
+            if (typeof window !== 'undefined') {
+              // History scroll restoration'ı manuel yap
+              if ('scrollRestoration' in history) {
+                history.scrollRestoration = 'manual';
+              }
+              
+              // Sayfa yüklenmeden önce body'ye temporary style ekle
+              document.documentElement.style.scrollBehavior = 'auto';
+              
+              // Sayfa tam yüklendiğinde smooth scroll'u aktif et
+              window.addEventListener('load', function() {
+                setTimeout(() => {
+                  document.documentElement.style.scrollBehavior = 'smooth';
+                }, 100);
+              });
+              
+              // Sayfa değişikliklerinde flicker önle
+              let isNavigating = false;
+              
+              // Before unload
+              window.addEventListener('beforeunload', function() {
+                isNavigating = true;
+                document.body.style.opacity = '0.98';
+                document.body.style.transition = 'opacity 0.1s ease-out';
+              });
+              
+              // Page show - sayfaya geri dönüldüğünde
+              window.addEventListener('pageshow', function(event) {
+                if (event.persisted || isNavigating) {
+                  document.body.style.opacity = '1';
+                  document.body.style.transition = 'opacity 0.15s ease-in';
+                  isNavigating = false;
+                }
+              });
+            }
+          `}
+        </Script>
       </head>
       <body className={`${inter.className} ${fontVariables}`}>
         <ThemeProvider

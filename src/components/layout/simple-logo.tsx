@@ -8,6 +8,7 @@ export function SimpleLogo({ className = "h-10 w-auto", isMobile = false }: { cl
   const [hasError, setHasError] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [forceShowFallback, setForceShowFallback] = useState(false)
+  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
     try {
@@ -62,21 +63,41 @@ export function SimpleLogo({ className = "h-10 w-auto", isMobile = false }: { cl
       console.error('Logo yüklenemedi:', error)
     } finally {
       setIsLoading(false)
-    }
-    
-    // iPhone 16 Plus timeout fallback
-    const timer = setTimeout(() => {
-      if (!logoUrl && typeof window !== 'undefined') {
+      
+      // iPhone 16 Plus timeout fallback - sadece logo yoksa ve error yoksa
+      if (typeof window !== 'undefined') {
         const isIPhone = /iPhone|iPad|iPod/.test(navigator.userAgent)
         if (isIPhone) {
-          console.log('iPhone timeout - forcing fallback logo')
-          setForceShowFallback(true)
+          const timer = setTimeout(() => {
+            // Timeout anında current state'i kontrol et
+            setLogoUrl(currentUrl => {
+              if (!currentUrl) {
+                console.log('iPhone timeout - no logo loaded, showing fallback')
+                setForceShowFallback(true)
+              }
+              return currentUrl // State'i değiştirme, sadece kontrol et
+            })
+          }, 2000) // 2 second timeout for iPhone
+          
+          setTimeoutId(timer)
         }
       }
-    }, 2000) // 2 second timeout for iPhone
+    }
     
-    return () => clearTimeout(timer)
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId)
+    }
   }, [])
+
+  // Logo yüklendiğinde timeout'u iptal et
+  useEffect(() => {
+    if (logoUrl && timeoutId) {
+      console.log('Logo loaded, clearing timeout')
+      clearTimeout(timeoutId)
+      setTimeoutId(null)
+      setForceShowFallback(false) // Logo varsa fallback'i kapat
+    }
+  }, [logoUrl, timeoutId])
 
   // Storage değişikliklerini dinle
   useEffect(() => {
@@ -144,6 +165,7 @@ export function SimpleLogo({ className = "h-10 w-auto", isMobile = false }: { cl
   }, [])
 
   console.log('SimpleLogo render - logoUrl:', logoUrl, 'hasError:', hasError, 'isLoading:', isLoading, 'isMobile:', isMobile)
+  console.log('SimpleLogo localStorage settings check:', typeof window !== 'undefined' ? localStorage.getItem('butik-firin-site-settings') : 'SSR')
   console.log('SimpleLogo viewport info:', typeof window !== 'undefined' ? {
     innerWidth: window.innerWidth,
     innerHeight: window.innerHeight,
@@ -191,6 +213,13 @@ export function SimpleLogo({ className = "h-10 w-auto", isMobile = false }: { cl
       }}
       onLoad={() => {
         console.log('SimpleLogo image loaded successfully:', logoUrl)
+        // Image yüklendiğinde timeout'u iptal et ve fallback'i kapat
+        if (timeoutId) {
+          clearTimeout(timeoutId)
+          setTimeoutId(null)
+        }
+        setForceShowFallback(false)
+        setHasError(false)
       }}
       onError={(e) => {
         console.error('SimpleLogo image failed to load:', logoUrl, e)
