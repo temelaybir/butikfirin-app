@@ -308,78 +308,44 @@ export default function HomePage() {
   // Final filtered products
   const finalFilteredProducts = searchQuery ? filteredSearchResults : filteredProducts
 
-  // Default hero slides with Unsplash images
-  const defaultHeroSlides = [
-    {
-      id: '1',
-      title: 'Taze & Lezzetli',
-      subtitle: 'Her gün taze üretim, geleneksel tarifler',
-      image_url: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=1200&h=600&fit=crop&q=80',
-      button_text: 'Menüyü Keşfet',
-      link_url: '#menu',
-      is_raw_image: false
-    },
-    {
-      id: '2',
-      title: '%20 İndirim',
-      subtitle: 'Tüm pastalarda geçerli',
-      image_url: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600&h=400&fit=crop&q=80',
-      button_text: 'Hemen Alışveriş',
-      link_url: '#pastalar',
-      is_raw_image: false
-    },
-    {
-      id: '3',
-      title: 'Günün Menüsü',
-      subtitle: 'Özel fiyatlarla',
-      image_url: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600&h=400&fit=crop&q=80',
-      button_text: 'Menüyü Gör',
-      link_url: '#menu',
-      is_raw_image: false
-    }
-  ]
-
-  // Always use at least 3 slides (fill with defaults if needed)
-  const displaySlides = [
-    heroSlides[0] || defaultHeroSlides[0],
-    heroSlides[1] || defaultHeroSlides[1],
-    heroSlides[2] || defaultHeroSlides[2]
-  ]
+  // Only show hero section if there are active slides
+  const hasActiveSlides = heroSlides.length > 0
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Hero Section - Fixed Layout */}
-      <section className="w-full bg-white py-4 sm:py-6 mb-4">
-        <div className="container mx-auto px-4 max-w-7xl">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 min-h-[300px] lg:min-h-[400px]">
+      {/* Hero Section - Only show if slides exist */}
+      {hasActiveSlides && (
+        <section className="w-full bg-white py-4 sm:py-6 mb-4">
+          <div className="container mx-auto px-4 max-w-7xl">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 min-h-[300px] lg:min-h-[400px]">
             {/* Sol: Hero Büyük Banner */}
             <div className="lg:col-span-2 h-[300px] lg:h-[400px]">
               <div className="relative rounded-xl overflow-hidden bg-gray-100 h-full shadow-lg">
                 {/* Hero Image with fallback */}
                 <img
-                  src={displaySlides[0]?.image_url || defaultHeroSlides[0].image_url}
-                  alt={displaySlides[0]?.title || 'Taze Fırın Ürünleri'}
+                  src={heroSlides[0]?.image_url}
+                  alt={heroSlides[0]?.title || 'Hero Banner'}
                   className="w-full h-full object-cover"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement
-                    target.src = defaultHeroSlides[0].image_url
-                  }}
                 />
                 
                 {/* Overlay Content */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent">
                   <div className="absolute bottom-0 left-0 right-0 p-6 lg:p-8">
                     <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-2">
-                      {displaySlides[0]?.title || defaultHeroSlides[0].title}
+                      {heroSlides[0]?.title}
                     </h2>
-                    <p className="text-base sm:text-lg text-white/90 mb-4">
-                      {displaySlides[0]?.subtitle || defaultHeroSlides[0].subtitle}
-                    </p>
-                    <Link href={displaySlides[0]?.link_url || defaultHeroSlides[0].link_url}>
-                      <Button className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2.5 text-sm font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all">
-                        {displaySlides[0]?.button_text || defaultHeroSlides[0].button_text}
-                      </Button>
-                    </Link>
+                    {heroSlides[0]?.subtitle && (
+                      <p className="text-base sm:text-lg text-white/90 mb-4">
+                        {heroSlides[0].subtitle}
+                      </p>
+                    )}
+                    {heroSlides[0]?.button_text && heroSlides[0]?.link_url && (
+                      <Link href={heroSlides[0].link_url}>
+                        <Button className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2.5 text-sm font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all">
+                          {heroSlides[0].button_text}
+                        </Button>
+                      </Link>
+                    )}
                   </div>
                 </div>
               </div>
@@ -388,38 +354,36 @@ export default function HomePage() {
             {/* Sağ: 2 Küçük Banner */}
             <div className="lg:col-span-1 h-[300px] lg:h-[400px]">
               <div className="grid grid-cols-2 lg:grid-cols-1 gap-4 h-full">
-                {[displaySlides[1], displaySlides[2]].map((slide, index) => {
-                  const defaultSlide = defaultHeroSlides[index + 1]
-                  return (
-                    <div
-                      key={`banner-${index + 1}`}
-                      className="relative rounded-xl overflow-hidden bg-gray-100 h-full shadow-lg"
-                    >
-                      {/* Banner Image with fallback */}
-                      <img
-                        src={slide?.image_url || defaultSlide.image_url}
-                        alt={slide?.title || defaultSlide.title}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement
-                          target.src = defaultSlide.image_url
-                        }}
-                      />
+                {heroSlides.slice(1, 3).map((slide, index) => (
+                  <div
+                    key={slide.id}
+                    className="relative rounded-xl overflow-hidden bg-gray-100 h-full shadow-lg"
+                  >
+                    {/* Banner Image */}
+                    <img
+                      src={slide.image_url}
+                      alt={slide.title}
+                      className="w-full h-full object-cover"
+                    />
                     
                     {/* Overlay Content */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent">
                       <div className="absolute bottom-0 left-0 right-0 p-4">
                         <h3 className="text-lg lg:text-xl font-bold text-white mb-1">
-                          {slide?.title || defaultSlide.title}
+                          {slide.title}
                         </h3>
-                        <p className="text-sm text-white/90 mb-2">
-                          {slide?.subtitle || defaultSlide.subtitle}
-                        </p>
-                        <Link href={slide?.link_url || defaultSlide.link_url}>
-                          <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-1.5 text-xs font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all">
-                            {slide?.button_text || defaultSlide.button_text}
-                          </Button>
-                        </Link>
+                        {slide.subtitle && (
+                          <p className="text-sm text-white/90 mb-2">
+                            {slide.subtitle}
+                          </p>
+                        )}
+                        {slide.button_text && slide.link_url && (
+                          <Link href={slide.link_url}>
+                            <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-1.5 text-xs font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all">
+                              {slide.button_text}
+                            </Button>
+                          </Link>
+                        )}
                       </div>
                     </div>
                     </div>
@@ -430,6 +394,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+      )}
 
       {/* Main Menu Section - Trendyol Style */}
       <section className="py-4 sm:py-6">
@@ -785,72 +750,45 @@ export default function HomePage() {
       </section>
 
       {/* Bottom Banner Section - After Menu */}
-      <section className="container mx-auto px-4 py-6 sm:py-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {/* Bottom banners with default Unsplash images */}
-            {[
-              {
-                id: '4',
-                title: 'Kahvaltı Menüsü',
-                subtitle: 'Taze sıcak kahvaltılıklar',
-                image_url: bottomSlides[0]?.image_url || 'https://images.unsplash.com/photo-1495147466023-ac5c588e2e94?w=400&h=300&fit=crop&q=80',
-                button_text: 'Keşfet',
-                link_url: '#kahvalti'
-              },
-              {
-                id: '5',
-                title: 'Özel Pastalar',
-                subtitle: 'Doğum günü ve özel günler için',
-                image_url: bottomSlides[1]?.image_url || 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400&h=300&fit=crop&q=80',
-                button_text: 'Sipariş Ver',
-                link_url: '#pastalar'
-              },
-              {
-                id: '6',
-                title: 'Tatlı Çeşitleri',
-                subtitle: 'Günlük taze tatlılar',
-                image_url: bottomSlides[2]?.image_url || 'https://images.unsplash.com/photo-1551024506-0bccd828d307?w=400&h=300&fit=crop&q=80',
-                button_text: 'İncele',
-                link_url: '#tatlilar'
-              }
-            ].map((slide) => (
-              <div
-                key={slide.id}
-                className="relative rounded-xl overflow-hidden group bg-gray-100 h-[200px] shadow-lg"
-              >
-                <img
-                  src={slide.image_url}
-                  alt={slide.title}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement
-                    // Fallback images
-                    if (slide.id === '4') target.src = 'https://images.unsplash.com/photo-1495147466023-ac5c588e2e94?w=400&h=300&fit=crop&q=80'
-                    else if (slide.id === '5') target.src = 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400&h=300&fit=crop&q=80'
-                    else target.src = 'https://images.unsplash.com/photo-1551024506-0bccd828d307?w=400&h=300&fit=crop&q=80'
-                  }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent">
-                  <div className="absolute bottom-0 left-0 right-0 p-4">
-                    <h3 className="text-lg font-bold text-white mb-1">
-                      {slide.title}
-                    </h3>
-                    <p className="text-sm text-white/90 mb-2">
-                      {slide.subtitle}
-                    </p>
-                    <Link href={slide.link_url}>
-                      <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-1.5 text-xs font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all">
-                        {slide.button_text}
-                      </Button>
-                    </Link>
+      {bottomSlides.length > 0 && (
+        <section className="container mx-auto px-4 py-6 sm:py-8">
+          <div className="max-w-7xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {bottomSlides.map((slide) => (
+                <div
+                  key={slide.id}
+                  className="relative rounded-xl overflow-hidden group bg-gray-100 h-[200px] shadow-lg"
+                >
+                  <img
+                    src={slide.image_url}
+                    alt={slide.title}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent">
+                    <div className="absolute bottom-0 left-0 right-0 p-4">
+                      <h3 className="text-lg font-bold text-white mb-1">
+                        {slide.title}
+                      </h3>
+                      {slide.subtitle && (
+                        <p className="text-sm text-white/90 mb-2">
+                          {slide.subtitle}
+                        </p>
+                      )}
+                      {slide.button_text && slide.link_url && (
+                        <Link href={slide.link_url}>
+                          <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-1.5 text-xs font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all">
+                            {slide.button_text}
+                          </Button>
+                        </Link>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Features Section - Dynamic Style */}
       <section className="py-8 sm:py-12 lg:py-16 bg-gray-50">
