@@ -136,9 +136,9 @@ export function NewHeader() {
   // Logo boyutunu hesapla
   const getLogoSize = () => {
     switch (logoSettings.logoSize) {
-      case 'small': return 'w-32 h-32'
-      case 'large': return 'w-64 h-64'
-      default: return 'w-48 h-48'
+      case 'small': return 'h-8 w-auto sm:h-12'
+      case 'large': return 'h-12 w-auto sm:h-16'
+      default: return 'h-10 w-auto sm:h-14'
     }
   }
 
@@ -179,7 +179,7 @@ export function NewHeader() {
           isScrolled && "shadow-md"
         )}>
           <div className="container mx-auto px-4">
-            <div className="flex items-center justify-between h-48 py-3">
+            <div className="flex items-center justify-between h-16 sm:h-20 py-2 sm:py-3">
               {/* Mobile Menu & Logo */}
               <div className="flex items-center gap-4">
                 {/* Mobile Menu */}

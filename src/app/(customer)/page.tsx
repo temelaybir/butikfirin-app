@@ -339,11 +339,11 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Banner Section */}
-      <section className="w-full bg-white py-4 sm:py-6 mb-4">
+      <section className="w-full bg-white py-2 sm:py-4 lg:py-6 mb-2 sm:mb-4">
         <div className="container mx-auto px-4 max-w-7xl">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 min-h-[300px] lg:min-h-[400px]">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 sm:gap-4 min-h-[200px] sm:min-h-[250px] lg:min-h-[400px]">
             {/* Sol: Hero Büyük Banner */}
-            <div className="lg:col-span-2 h-[300px] lg:h-[400px]">
+            <div className="lg:col-span-2 h-[200px] sm:h-[250px] lg:h-[400px]">
               <div className="relative rounded-xl overflow-hidden bg-gray-100 h-full shadow-lg group">
                 {heroBanners.main ? (
                   <>
@@ -354,20 +354,20 @@ export default function HomePage() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                     {(heroBanners.main.title || heroBanners.main.button_text) && (
-                      <div className="absolute bottom-0 left-0 right-0 p-6 lg:p-8">
+                      <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-6 lg:p-8">
                         {heroBanners.main.title && (
-                          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-2">
+                          <h2 className="text-lg sm:text-2xl lg:text-4xl font-bold text-white mb-1 sm:mb-2">
                             {heroBanners.main.title}
                           </h2>
                         )}
                         {heroBanners.main.subtitle && (
-                          <p className="text-base sm:text-lg text-white/90 mb-4">
+                          <p className="text-sm sm:text-base lg:text-lg text-white/90 mb-2 sm:mb-4">
                             {heroBanners.main.subtitle}
                           </p>
                         )}
                         {heroBanners.main.button_text && heroBanners.main.button_link && (
                           <Link href={heroBanners.main.button_link}>
-                            <Button className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2.5 text-sm font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all">
+                            <Button className="bg-orange-500 hover:bg-orange-600 text-white px-3 py-1.5 sm:px-6 sm:py-2.5 text-xs sm:text-sm font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all">
                               {heroBanners.main.button_text}
                             </Button>
                           </Link>
@@ -389,8 +389,8 @@ export default function HomePage() {
             </div>
 
             {/* Sağ: 2 Küçük Banner */}
-            <div className="lg:col-span-1 h-[300px] lg:h-[400px]">
-              <div className="grid grid-rows-2 gap-4 h-full">
+            <div className="lg:col-span-1 h-[200px] sm:h-[250px] lg:h-[400px]">
+              <div className="grid grid-rows-2 gap-2 sm:gap-4 h-full">
                 {/* Banner 1 - Sağ Üst */}
                 <div className="relative rounded-xl overflow-hidden bg-gray-100 shadow-lg h-full group">
                   {heroBanners.side1 ? (
@@ -402,20 +402,20 @@ export default function HomePage() {
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                       {(heroBanners.side1.title || heroBanners.side1.button_text) && (
-                        <div className="absolute bottom-0 left-0 right-0 p-4">
+                        <div className="absolute bottom-0 left-0 right-0 p-2 sm:p-4">
                           {heroBanners.side1.title && (
-                            <h3 className="text-lg lg:text-xl font-bold text-white mb-1">
+                            <h3 className="text-sm sm:text-lg lg:text-xl font-bold text-white mb-1">
                               {heroBanners.side1.title}
                             </h3>
                           )}
                           {heroBanners.side1.subtitle && (
-                            <p className="text-sm text-white/90 mb-2">
+                            <p className="text-xs sm:text-sm text-white/90 mb-1 sm:mb-2">
                               {heroBanners.side1.subtitle}
                             </p>
                           )}
                           {heroBanners.side1.button_text && heroBanners.side1.button_link && (
                             <Link href={heroBanners.side1.button_link}>
-                              <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-1.5 text-xs font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all">
+                              <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white px-2 py-1 sm:px-4 sm:py-1.5 text-xs font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all">
                                 {heroBanners.side1.button_text}
                               </Button>
                             </Link>
@@ -446,20 +446,20 @@ export default function HomePage() {
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                       {(heroBanners.side2.title || heroBanners.side2.button_text) && (
-                        <div className="absolute bottom-0 left-0 right-0 p-4">
+                        <div className="absolute bottom-0 left-0 right-0 p-2 sm:p-4">
                           {heroBanners.side2.title && (
-                            <h3 className="text-lg lg:text-xl font-bold text-white mb-1">
+                            <h3 className="text-sm sm:text-lg lg:text-xl font-bold text-white mb-1">
                               {heroBanners.side2.title}
                             </h3>
                           )}
                           {heroBanners.side2.subtitle && (
-                            <p className="text-sm text-white/90 mb-2">
+                            <p className="text-xs sm:text-sm text-white/90 mb-1 sm:mb-2">
                               {heroBanners.side2.subtitle}
                             </p>
                           )}
                           {heroBanners.side2.button_text && heroBanners.side2.button_link && (
                             <Link href={heroBanners.side2.button_link}>
-                              <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-1.5 text-xs font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all">
+                              <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white px-2 py-1 sm:px-4 sm:py-1.5 text-xs font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all">
                                 {heroBanners.side2.button_text}
                               </Button>
                             </Link>

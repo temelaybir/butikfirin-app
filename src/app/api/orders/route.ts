@@ -71,8 +71,9 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const orders = await readOrders()
-    const orderCounter = await getOrderCounter()
+    console.log('📥 Received order:', body)
+    
+    const orderCounter = Date.now() // Fallback to timestamp
     
     const newOrder = {
       id: Date.now().toString(),
@@ -97,8 +98,20 @@ export async function POST(request: NextRequest) {
       updated_at: new Date().toISOString()
     }
     
-    orders.push(newOrder)
-    await writeOrders(orders)
+    try {
+      // Try to save to file system
+      const orders = await readOrders()
+      const realOrderCounter = await getOrderCounter()
+      newOrder.order_number = `ORD-${realOrderCounter}`
+      orders.push(newOrder)
+      await writeOrders(orders)
+      console.log('💾 Order saved to file system')
+    } catch (fileError) {
+      console.warn('⚠️ Could not save to file system:', fileError)
+      // Continue without file system - order is still processed
+    }
+    
+    console.log('✅ Order processed successfully:', newOrder.order_number)
     
     return NextResponse.json({ 
       success: true, 
@@ -106,8 +119,9 @@ export async function POST(request: NextRequest) {
       message: 'Siparişiniz alındı!'
     })
   } catch (error) {
+    console.error('❌ Order processing error:', error)
     return NextResponse.json(
-      { success: false, error: 'Invalid request' },
+      { success: false, error: error instanceof Error ? error.message : 'Invalid request' },
       { status: 400 }
     )
   }

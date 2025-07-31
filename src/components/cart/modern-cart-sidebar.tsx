@@ -76,6 +76,8 @@ export function ModernCartSidebar({ children }: ModernCartSidebarProps) {
         status: 'pending'
       }
 
+      console.log('🛒 Sending order:', order)
+
       // Send order to API
       const response = await fetch('/api/orders', {
         method: 'POST',
@@ -85,7 +87,23 @@ export function ModernCartSidebar({ children }: ModernCartSidebarProps) {
         body: JSON.stringify(order)
       })
 
+      console.log('📡 Response status:', response.status, response.statusText)
+
+      if (!response.ok) {
+        let errorMessage = `HTTP ${response.status}: ${response.statusText}`
+        try {
+          const errorData = await response.json()
+          errorMessage = errorData.error || errorMessage
+        } catch {
+          const errorText = await response.text()
+          errorMessage = errorText || errorMessage
+        }
+        console.error('❌ Response error:', errorMessage)
+        throw new Error(errorMessage)
+      }
+
       const data = await response.json()
+      console.log('✅ Response data:', data)
 
       if (data.success) {
         // Show success message with order number
@@ -100,11 +118,14 @@ export function ModernCartSidebar({ children }: ModernCartSidebarProps) {
         // Close the sidebar
         closeCart()
       } else {
-        throw new Error('Sipariş gönderilemedi')
+        const errorMsg = data.error || 'Sipariş gönderilemedi'
+        console.error('❌ API returned error:', errorMsg)
+        throw new Error(errorMsg)
       }
     } catch (error) {
-      console.error('Order submission error:', error)
-      toast.error('Sipariş gönderilirken bir hata oluştu')
+      console.error('🚨 Order submission error:', error)
+      const errorMessage = error instanceof Error ? error.message : 'Sipariş gönderilirken bir hata oluştu'
+      toast.error(`Hata: ${errorMessage}`)
     }
   }
 

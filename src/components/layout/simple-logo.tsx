@@ -3,7 +3,7 @@
 import { ChefHat } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
-export function SimpleLogo({ className = "w-48 h-48" }: { className?: string }) {
+export function SimpleLogo({ className = "h-10 w-auto" }: { className?: string }) {
   const [logoUrl, setLogoUrl] = useState<string>('')
   const [hasError, setHasError] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
@@ -89,8 +89,8 @@ export function SimpleLogo({ className = "w-48 h-48" }: { className?: string }) 
 
   if (isLoading || !logoUrl || hasError) {
     return (
-      <div className={`${className} bg-orange-600 rounded-lg flex items-center justify-center shadow-lg`}>
-        <ChefHat className="text-white w-6 h-6" />
+      <div className={`${className} bg-orange-600 rounded-lg flex items-center justify-center shadow-lg min-w-[2.5rem]`}>
+        <ChefHat className="text-white w-4 h-4 sm:w-6 sm:h-6" />
       </div>
     )
   }

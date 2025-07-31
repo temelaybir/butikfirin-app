@@ -12,6 +12,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog'
 import {
@@ -275,6 +276,12 @@ export default function HeroBannersPage() {
             <DialogTitle>
               {editingBanner?.id ? 'Banner Düzenle' : 'Yeni Banner Ekle'}
             </DialogTitle>
+            <DialogDescription>
+              {editingBanner?.id 
+                ? 'Mevcut banner bilgilerini düzenleyin ve kaydedin.' 
+                : 'Yeni bir hero banner oluşturun. Görsel, başlık ve buton bilgilerini ekleyebilirsiniz.'
+              }
+            </DialogDescription>
           </DialogHeader>
 
           {editingBanner && (
