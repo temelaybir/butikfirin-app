@@ -80,8 +80,8 @@ function ProductCardComponent({ product }: ProductCardProps) {
         }
       },
       {
-        rootMargin: '50px', // Load 50px before entering viewport
-        threshold: 0.1
+        rootMargin: '100px', // Load 100px before entering viewport
+        threshold: 0.15
       }
     )
     
@@ -149,8 +149,11 @@ function ProductCardComponent({ product }: ProductCardProps) {
     return (
       <div 
         ref={cardRef}
-        className="bg-gray-100 animate-pulse rounded-lg h-[420px] w-full"
-      />
+        className="bg-gray-100 rounded-lg h-[420px] w-full flex items-center justify-center"
+        style={{ minHeight: '420px' }}
+      >
+        <div className="animate-pulse w-full h-full bg-gray-200 rounded-lg"></div>
+      </div>
     )
   }
 
@@ -177,9 +180,9 @@ function ProductCardComponent({ product }: ProductCardProps) {
   if (cardStyle === 'default') {
     return (
       <div className="group relative" ref={cardRef}>
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300 overflow-hidden h-[460px] md:h-[460px] sm:h-[380px] flex flex-col touch-manipulation">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200 overflow-hidden h-[460px] md:h-[460px] sm:h-[380px] flex flex-col touch-manipulation">
           {/* Badges */}
-          <div className="absolute top-3 left-3 right-3 flex justify-between items-start z-10 pointer-events-none">
+          <div className="absolute top-3 left-3 right-3 flex justify-between items-start z-10 pointer-events-none will-change-auto">
             <div className="flex flex-col gap-2">
               {mockData.isBestSeller && (
                 <Badge className="bg-slate-800 text-white text-xs font-medium px-2.5 py-1 rounded-lg shadow-sm pointer-events-none">
@@ -201,7 +204,7 @@ function ProductCardComponent({ product }: ProductCardProps) {
               <Button
                 size="icon"
                 variant="secondary"
-                className="h-9 w-9 rounded-full bg-white/90 backdrop-blur-sm border-0 shadow-sm opacity-0 group-hover:opacity-100 md:opacity-0 md:group-hover:opacity-100 sm:opacity-100 transition-all duration-200 hover:bg-white hover:scale-110 pointer-events-auto touch-manipulation z-20"
+                className="h-9 w-9 rounded-full bg-white/90 backdrop-blur-sm border-0 shadow-sm opacity-0 group-hover:opacity-100 md:opacity-0 md:group-hover:opacity-100 sm:opacity-100 transition-opacity duration-200 hover:bg-white pointer-events-auto touch-manipulation z-20"
                 onClick={handleWishlist}
               >
                 <Heart className={cn("h-4 w-4", isWishlistItem ? "fill-red-500 text-red-500" : "text-gray-600")} />
@@ -226,7 +229,7 @@ function ProductCardComponent({ product }: ProductCardProps) {
                 src={imageUrl}
                 alt={imageAlt}
                 fill
-                className="object-cover transition-transform duration-500 group-hover:scale-105"
+                className="object-cover transition-transform duration-300 group-hover:scale-102"
               />
             </div>
           </Link>
@@ -319,7 +322,7 @@ function ProductCardComponent({ product }: ProductCardProps) {
   if (cardStyle === 'minimal') {
     return (
       <div className="group relative" ref={cardRef}>
-        <div className="bg-white rounded-lg hover:shadow-md transition-all duration-200 overflow-hidden h-[380px] flex flex-col touch-manipulation">
+        <div className="bg-white rounded-lg hover:shadow-sm transition-shadow duration-150 overflow-hidden h-[380px] flex flex-col touch-manipulation">
           {/* Image Container */}
           <Link
             href={`/urunler/${product.slug}`}
@@ -454,7 +457,7 @@ function ProductCardComponent({ product }: ProductCardProps) {
   if (cardStyle === 'trendyol') {
     return (
       <div className="group relative" ref={cardRef}>
-        <div className="bg-white rounded-lg border border-gray-200 hover:border-orange-400 hover:shadow-lg transition-all duration-200 overflow-hidden h-[420px] flex flex-col touch-manipulation">
+        <div className="bg-white rounded-lg border border-gray-200 hover:border-orange-400 hover:shadow-md transition-all duration-150 overflow-hidden h-[420px] flex flex-col touch-manipulation">
           {/* Image Container */}
           <Link
             href={`/urunler/${product.slug}`}
@@ -604,7 +607,7 @@ function ProductCardComponent({ product }: ProductCardProps) {
   if (cardStyle === 'wolt') {
     return (
       <div className="group relative" ref={cardRef}>
-        <div className="bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 h-[400px] flex flex-col touch-manipulation">
+        <div className="bg-white rounded-2xl overflow-hidden hover:shadow-lg transition-shadow duration-200 h-[400px] flex flex-col touch-manipulation">
           {/* Image Container */}
           <Link
             href={`/urunler/${product.slug}`}
@@ -745,7 +748,7 @@ function ProductCardComponent({ product }: ProductCardProps) {
   if (cardStyle === 'detailed') {
     return (
       <div className="group relative" ref={cardRef}>
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 overflow-hidden h-[520px] flex flex-col touch-manipulation">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg transition-shadow duration-200 overflow-hidden h-[520px] flex flex-col touch-manipulation">
           {/* Badges */}
           <div className="absolute top-4 left-4 right-4 flex justify-between items-start z-10 pointer-events-none">
             <div className="flex flex-col gap-2">
@@ -771,7 +774,7 @@ function ProductCardComponent({ product }: ProductCardProps) {
               <Button
                 size="icon"
                 variant="secondary"
-                className="h-10 w-10 rounded-full bg-white/90 backdrop-blur-sm border-0 shadow-lg opacity-0 group-hover:opacity-100 md:opacity-0 md:group-hover:opacity-100 sm:opacity-100 transition-all duration-200 hover:bg-white hover:scale-110 pointer-events-auto touch-manipulation z-20"
+                className="h-10 w-10 rounded-full bg-white/90 backdrop-blur-sm border-0 shadow-lg opacity-0 group-hover:opacity-100 md:opacity-0 md:group-hover:opacity-100 sm:opacity-100 transition-opacity duration-150 hover:bg-white pointer-events-auto touch-manipulation z-20"
                 onClick={handleWishlist}
               >
                 <Heart className={cn("h-5 w-5", isWishlistItem ? "fill-red-500 text-red-500" : "text-gray-600")} />
@@ -797,7 +800,7 @@ function ProductCardComponent({ product }: ProductCardProps) {
                   src={imageUrl}
                   alt={imageAlt}
                   fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  className="object-cover transition-transform duration-300 group-hover:scale-102"
                 />
               </div>
             </Link>
@@ -923,7 +926,7 @@ function ProductCardComponent({ product }: ProductCardProps) {
   if (cardStyle === 'compact') {
     return (
       <div className="group relative" ref={cardRef}>
-        <div className="bg-white rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 overflow-hidden h-[300px] flex flex-col touch-manipulation">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-100 hover:shadow-sm transition-shadow duration-150 overflow-hidden h-[300px] flex flex-col touch-manipulation">
           {/* Compact Image */}
           <Link
             href={`/urunler/${product.slug}`}
@@ -1026,7 +1029,7 @@ function ProductCardComponent({ product }: ProductCardProps) {
   // Fallback to default style instead of null
   return (
     <div className="group relative">
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300 overflow-hidden h-[460px] md:h-[460px] sm:h-[380px] flex flex-col touch-manipulation">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200 overflow-hidden h-[460px] md:h-[460px] sm:h-[380px] flex flex-col touch-manipulation">
         {/* Badges */}
         <div className="absolute top-3 left-3 right-3 flex justify-between items-start z-10 pointer-events-none">
           <div className="flex flex-col gap-2">
@@ -1050,7 +1053,7 @@ function ProductCardComponent({ product }: ProductCardProps) {
             <Button
               size="icon"
               variant="secondary"
-              className="h-9 w-9 rounded-full bg-white/90 backdrop-blur-sm border-0 shadow-sm opacity-0 group-hover:opacity-100 md:opacity-0 md:group-hover:opacity-100 sm:opacity-100 transition-all duration-200 hover:bg-white hover:scale-110 pointer-events-auto touch-manipulation z-20"
+              className="h-9 w-9 rounded-full bg-white/90 backdrop-blur-sm border-0 shadow-sm opacity-0 group-hover:opacity-100 md:opacity-0 md:group-hover:opacity-100 sm:opacity-100 transition-opacity duration-150 hover:bg-white pointer-events-auto touch-manipulation z-20"
               onClick={handleWishlist}
             >
               <Heart className={cn("h-4 w-4", isWishlistItem ? "fill-red-500 text-red-500" : "text-gray-600")} />

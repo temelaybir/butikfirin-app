@@ -827,32 +827,37 @@ export default function HomePage() {
                           </p>
 
                           {/* Loyalty Message - Show relevant messages */}
-                          {Math.random() > 0.6 && (
-                            <div className="mb-2">
-                              {(() => {
-                                // Filter messages relevant to this product
-                                const relevantMessages = mainLoyaltyMessages.filter(msg =>
-                                  msg.forAll || (msg.categories && msg.categories.includes(product.category_name))
-                                )
+                          {(() => {
+                            // Product ID'sine göre sabit sadakat mesajı göster
+                            const productIdNum = typeof product.id === 'string' ? parseInt(product.id) : product.id
+                            const shouldShow = (productIdNum % 10) > 3 // %60 oranında göster
+                            
+                            if (!shouldShow) return null
+                            
+                            // Filter messages relevant to this product
+                            const relevantMessages = mainLoyaltyMessages.filter(msg =>
+                              msg.forAll || (msg.categories && msg.categories.includes(product.category_name))
+                            )
 
-                                if (relevantMessages.length === 0) return null
+                            if (relevantMessages.length === 0) return null
 
-                                // Pick a random relevant message
-                                const message = relevantMessages[Math.floor(Math.random() * relevantMessages.length)]
-                                const Icon = message.icon
-                                const [textColor, bgColor] = message.color.split(' ')
+                            // Product ID'sine göre sabit mesaj seç
+                            const messageIndex = productIdNum % relevantMessages.length
+                            const message = relevantMessages[messageIndex]
+                            const Icon = message.icon
+                            const [textColor, bgColor] = message.color.split(' ')
 
-                                return (
-                                  <div className={`${bgColor} rounded-md px-2 py-1.5 flex items-center gap-1.5`}>
-                                    <Icon className={`w-3 h-3 flex-shrink-0 ${textColor}`} />
-                                    <span className={`text-[10px] sm:text-xs font-medium ${textColor} leading-tight`}>
-                                      {message.text}
-                                    </span>
-                                  </div>
-                                )
-                              })()}
-                            </div>
-                          )}
+                            return (
+                              <div className="mb-2">
+                                <div className={`${bgColor} rounded-md px-2 py-1.5 flex items-center gap-1.5`}>
+                                  <Icon className={`w-3 h-3 flex-shrink-0 ${textColor}`} />
+                                  <span className={`text-[10px] sm:text-xs font-medium ${textColor} leading-tight`}>
+                                    {message.text}
+                                  </span>
+                                </div>
+                              </div>
+                            )
+                          })()}
                         </div>
 
                         {/* Price & Button - Always at Bottom */}

@@ -159,9 +159,22 @@ export function NewHeader() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/90 shadow-sm">
+      <header className="sticky top-0 z-50 w-full shadow-sm relative overflow-hidden">
+        {/* Background Image */}
+        <div 
+          className="absolute inset-0 z-0"
+          style={{
+            backgroundImage: 'url(https://images.unsplash.com/photo-1509440159596-0249088772ff)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            opacity: 0.25
+          }}
+        />
+        {/* Background Overlay */}
+        <div className="absolute inset-0 z-1 bg-white/85 backdrop-blur-sm supports-[backdrop-filter]:bg-white/80" />
         {/* Top Bar - Restaurant Info */}
-        <div className="border-b bg-orange-50 text-orange-900">
+        <div className="border-b bg-orange-50/90 text-orange-900 relative z-10">
           <div className="container mx-auto px-4">
             <div className="flex items-center justify-between h-10 text-sm">
               <div className="hidden md:flex items-center gap-6">
@@ -190,7 +203,7 @@ export function NewHeader() {
 
         {/* Main Header */}
         <div className={cn(
-          "transition-all duration-200",
+          "transition-all duration-200 relative z-10",
           isScrolled && "shadow-md"
         )}>
           <div className="container mx-auto px-4">
