@@ -339,22 +339,27 @@ export default function HomePage() {
     }
   ]
 
-  const displaySlides = heroSlides.length > 0 ? heroSlides : defaultHeroSlides
+  // Always use at least 3 slides (fill with defaults if needed)
+  const displaySlides = [
+    heroSlides[0] || defaultHeroSlides[0],
+    heroSlides[1] || defaultHeroSlides[1],
+    heroSlides[2] || defaultHeroSlides[2]
+  ]
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Hero Section - Modern Layout */}
-      <section className="w-full bg-gradient-to-b from-gray-50 to-white py-6">
+      {/* Hero Section - Fixed Layout */}
+      <section className="w-full bg-white py-4 sm:py-6 mb-4">
         <div className="container mx-auto px-4 max-w-7xl">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 h-auto lg:h-[480px]">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 min-h-[300px] lg:min-h-[400px]">
             {/* Sol: Hero Büyük Banner */}
-            <div className="lg:col-span-2 h-[400px] lg:h-full">
-              <div className="relative rounded-2xl overflow-hidden group bg-gray-100 h-full shadow-xl">
+            <div className="lg:col-span-2 h-[300px] lg:h-[400px]">
+              <div className="relative rounded-xl overflow-hidden bg-gray-100 h-full shadow-lg">
                 {/* Hero Image with fallback */}
                 <img
                   src={displaySlides[0]?.image_url || defaultHeroSlides[0].image_url}
                   alt={displaySlides[0]?.title || 'Taze Fırın Ürünleri'}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  className="w-full h-full object-cover"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement
                     target.src = defaultHeroSlides[0].image_url
@@ -381,24 +386,25 @@ export default function HomePage() {
             </div>
 
             {/* Sağ: 2 Küçük Banner */}
-            <div className="grid grid-cols-2 lg:grid-cols-1 gap-4 h-[240px] lg:h-full">
-              {displaySlides.slice(1, 3).map((slide, index) => {
-                const defaultSlide = defaultHeroSlides[index + 1]
-                return (
-                  <div
-                    key={slide?.id || defaultSlide.id}
-                    className="relative rounded-2xl overflow-hidden group bg-gray-100 shadow-xl"
-                  >
-                    {/* Banner Image with fallback */}
-                    <img
-                      src={slide?.image_url || defaultSlide.image_url}
-                      alt={slide?.title || defaultSlide.title}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement
-                        target.src = defaultSlide.image_url
-                      }}
-                    />
+            <div className="lg:col-span-1 h-[300px] lg:h-[400px]">
+              <div className="grid grid-cols-2 lg:grid-cols-1 gap-4 h-full">
+                {[displaySlides[1], displaySlides[2]].map((slide, index) => {
+                  const defaultSlide = defaultHeroSlides[index + 1]
+                  return (
+                    <div
+                      key={`banner-${index + 1}`}
+                      className="relative rounded-xl overflow-hidden bg-gray-100 h-full shadow-lg"
+                    >
+                      {/* Banner Image with fallback */}
+                      <img
+                        src={slide?.image_url || defaultSlide.image_url}
+                        alt={slide?.title || defaultSlide.title}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement
+                          target.src = defaultSlide.image_url
+                        }}
+                      />
                     
                     {/* Overlay Content */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent">
@@ -416,9 +422,10 @@ export default function HomePage() {
                         </Link>
                       </div>
                     </div>
-                  </div>
-                )
-              })}
+                    </div>
+                  )
+                })}
+              </div>
             </div>
           </div>
         </div>
