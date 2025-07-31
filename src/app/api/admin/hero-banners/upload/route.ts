@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { createAdminSupabaseClient } from '@/lib/supabase/admin-client'
 import { validateAdminAuth } from '@/lib/auth/admin-api-auth'
 
 export async function POST(request: NextRequest) {
@@ -14,7 +15,7 @@ export async function POST(request: NextRequest) {
     //   return NextResponse.json({ error: validation.error || 'Unauthorized' }, { status: 401 })
     // }
 
-    const supabase = await createClient()
+    const supabase = createAdminSupabaseClient()
     const formData = await request.formData()
     const file = formData.get('file') as File
 
@@ -88,7 +89,7 @@ export async function DELETE(request: NextRequest) {
     //   return NextResponse.json({ error: validation.error || 'Unauthorized' }, { status: 401 })
     // }
 
-    const supabase = await createClient()
+    const supabase = createAdminSupabaseClient()
     const { searchParams } = new URL(request.url)
     const path = searchParams.get('path')
 

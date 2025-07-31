@@ -95,6 +95,23 @@ export default function HomePage() {
     return () => window.removeEventListener('resize', checkIsMobile)
   }, [])
 
+  // Banner boyut hesaplama fonksiyonu
+  const getBannerStyle = (banner: any) => {
+    if (!banner) return {}
+    
+    const style: any = {}
+    
+    if (banner.custom_width) {
+      style.width = `${banner.custom_width}${banner.size_unit || 'px'}`
+    }
+    
+    if (banner.custom_height) {
+      style.height = `${banner.custom_height}${banner.size_unit || 'px'}`
+    }
+    
+    return style
+  }
+
   // Load hero banners from API
   const loadHeroBanners = async () => {
     try {
@@ -360,14 +377,26 @@ export default function HomePage() {
       {/* Hero Banner Section */}
       <section className="w-full bg-white py-2 sm:py-4 lg:py-6 mb-2 sm:mb-4">
         <div className="container mx-auto px-4 max-w-7xl">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 sm:gap-4 min-h-[200px] sm:min-h-[250px] lg:min-h-[400px]" style={{
-            minHeight: isMobile ? '200px' : typeof window !== 'undefined' && window.innerWidth >= 1024 ? '400px' : '250px'
-          }}>
+          <div className={`gap-2 sm:gap-4 ${
+            // Dynamic grid layout based on visible banners
+            heroBanners.main && (!isMobile || heroBanners.main.show_on_mobile !== false) &&
+            ((heroBanners.side1 && (!isMobile || heroBanners.side1.show_on_mobile !== false)) ||
+             (heroBanners.side2 && (!isMobile || heroBanners.side2.show_on_mobile !== false)))
+              ? 'grid grid-cols-1 lg:grid-cols-3' 
+              : 'flex justify-center'
+          }`}>
             {/* Sol: Hero Büyük Banner */}
-            <div className={`lg:col-span-2 h-[200px] sm:h-[250px] lg:h-[400px] ${
-              heroBanners.main && isMobile && heroBanners.main.show_on_mobile === false ? 'hidden' : ''
-            }`}>
-              <div className="relative rounded-xl overflow-hidden bg-gray-100 h-full shadow-lg group">
+            {heroBanners.main && (!isMobile || heroBanners.main.show_on_mobile !== false) && (
+              <div 
+                className="lg:col-span-2 relative rounded-xl overflow-hidden bg-gray-100 shadow-lg group"
+                style={{
+                  ...getBannerStyle(heroBanners.main),
+                  // Default heights if no custom height
+                  height: heroBanners.main.custom_height 
+                    ? `${heroBanners.main.custom_height}${heroBanners.main.size_unit || 'px'}`
+                    : isMobile ? '200px' : '400px'
+                }}
+              >
                 {heroBanners.main ? (
                   <>
                     <img
@@ -411,17 +440,23 @@ export default function HomePage() {
                   </>
                 )}
               </div>
-            </div>
+            )}
 
             {/* Sağ: 2 Küçük Banner */}
-            <div className={`lg:col-span-1 h-[200px] sm:h-[250px] lg:h-[400px] ${
-              isMobile && (!heroBanners.side1?.show_on_mobile && !heroBanners.side2?.show_on_mobile) ? 'hidden' : ''
-            }`}>
-              <div className="grid grid-rows-2 gap-2 sm:gap-4 h-full">
+            {((heroBanners.side1 && (!isMobile || heroBanners.side1.show_on_mobile !== false)) ||
+              (heroBanners.side2 && (!isMobile || heroBanners.side2.show_on_mobile !== false))) && (
+              <div className="lg:col-span-1 space-y-2 sm:space-y-4">
                 {/* Banner 1 - Sağ Üst */}
-                <div className={`relative rounded-xl overflow-hidden bg-gray-100 shadow-lg h-full group ${
-                  heroBanners.side1 && isMobile && heroBanners.side1.show_on_mobile === false ? 'hidden' : ''
-                }`}>
+                {heroBanners.side1 && (!isMobile || heroBanners.side1.show_on_mobile !== false) && (
+                  <div 
+                    className="relative rounded-xl overflow-hidden bg-gray-100 shadow-lg group"
+                    style={{
+                      ...getBannerStyle(heroBanners.side1),
+                      height: heroBanners.side1.custom_height 
+                        ? `${heroBanners.side1.custom_height}${heroBanners.side1.size_unit || 'px'}`
+                        : isMobile ? '100px' : '190px'
+                    }}
+                  >
                   {heroBanners.side1 ? (
                     <>
                       <img
@@ -464,12 +499,20 @@ export default function HomePage() {
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
                     </>
                   )}
-                </div>
+                  </div>
+                )}
 
                 {/* Banner 2 - Sağ Alt */}
-                <div className={`relative rounded-xl overflow-hidden bg-gray-100 shadow-lg h-full group ${
-                  heroBanners.side2 && isMobile && heroBanners.side2.show_on_mobile === false ? 'hidden' : ''
-                }`}>
+                {heroBanners.side2 && (!isMobile || heroBanners.side2.show_on_mobile !== false) && (
+                  <div 
+                    className="relative rounded-xl overflow-hidden bg-gray-100 shadow-lg group"
+                    style={{
+                      ...getBannerStyle(heroBanners.side2),
+                      height: heroBanners.side2.custom_height 
+                        ? `${heroBanners.side2.custom_height}${heroBanners.side2.size_unit || 'px'}`
+                        : isMobile ? '100px' : '190px'
+                    }}
+                  >
                   {heroBanners.side2 ? (
                     <>
                       <img
@@ -512,9 +555,10 @@ export default function HomePage() {
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
                     </>
                   )}
-                </div>
+                  </div>
+                )}
               </div>
-            </div>
+            )}
           </div>
         </div>
       </section>

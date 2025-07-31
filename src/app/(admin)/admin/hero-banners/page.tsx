@@ -38,6 +38,9 @@ interface HeroBanner {
   is_raw_image: boolean
   show_on_mobile: boolean
   display_order: number
+  custom_width?: number
+  custom_height?: number
+  size_unit?: 'px' | '%' | 'vh' | 'vw'
   created_at: string
   updated_at: string
 }
@@ -168,6 +171,9 @@ export default function HeroBannersPage() {
             is_raw_image: false,
             show_on_mobile: true,
             display_order: 0,
+            custom_width: undefined,
+            custom_height: undefined,
+            size_unit: 'px',
             created_at: '',
             updated_at: ''
           })
@@ -243,6 +249,9 @@ export default function HeroBannersPage() {
                       <p><strong>Durum:</strong> {banner.is_active ? 'Aktif' : 'Pasif'}</p>
                       <p><strong>Ham Görsel:</strong> {banner.is_raw_image ? 'Evet' : 'Hayır'}</p>
                       <p><strong>Mobilde Göster:</strong> {banner.show_on_mobile ? 'Evet' : 'Hayır'}</p>
+                      {(banner.custom_width || banner.custom_height) && (
+                        <p><strong>Özel Boyut:</strong> {banner.custom_width || 'auto'}x{banner.custom_height || 'auto'}{banner.size_unit || 'px'}</p>
+                      )}
                     </div>
                   </div>
                 ) : (
@@ -262,6 +271,9 @@ export default function HeroBannersPage() {
                           is_raw_image: false,
                           show_on_mobile: true,
                           display_order: 0,
+                          custom_width: undefined,
+                          custom_height: undefined,
+                          size_unit: 'px',
                           created_at: '',
                           updated_at: ''
                         })
@@ -417,6 +429,61 @@ export default function HeroBannersPage() {
                   })}
                   placeholder="Görsel açıklaması"
                 />
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <Label className="text-base font-semibold mb-2 block">Boyut Ayarları</Label>
+                  <div className="grid grid-cols-3 gap-4 p-4 bg-gray-50 rounded-lg">
+                    <div>
+                      <Label>Genişlik</Label>
+                      <Input
+                        type="number"
+                        placeholder="Otomatik"
+                        value={editingBanner.custom_width || ''}
+                        onChange={(e) => setEditingBanner({
+                          ...editingBanner,
+                          custom_width: e.target.value ? parseInt(e.target.value) : undefined
+                        })}
+                      />
+                    </div>
+                    <div>
+                      <Label>Yükseklik</Label>
+                      <Input
+                        type="number"
+                        placeholder="Otomatik"
+                        value={editingBanner.custom_height || ''}
+                        onChange={(e) => setEditingBanner({
+                          ...editingBanner,
+                          custom_height: e.target.value ? parseInt(e.target.value) : undefined
+                        })}
+                      />
+                    </div>
+                    <div>
+                      <Label>Birim</Label>
+                      <Select
+                        value={editingBanner.size_unit || 'px'}
+                        onValueChange={(value) => setEditingBanner({
+                          ...editingBanner,
+                          size_unit: value as 'px' | '%' | 'vh' | 'vw'
+                        })}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="px">Piksel (px)</SelectItem>
+                          <SelectItem value="%">Yüzde (%)</SelectItem>
+                          <SelectItem value="vh">Viewport Height (vh)</SelectItem>
+                          <SelectItem value="vw">Viewport Width (vw)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-2">
+                    📝 Boyut belirtmezseniz otomatik boyutlandırma kullanılır. Ana banner için 2:1, yan bannerlar için 1:1 oran önerilir.
+                  </p>
+                </div>
               </div>
 
               <div className="space-y-4">
