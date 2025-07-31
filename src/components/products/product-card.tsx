@@ -10,7 +10,7 @@ import { useWishlist } from '@/context/wishlist-context'
 import { cn } from '@/lib/utils'
 import { Clock, Eye, Heart, ShoppingCart, Star, TrendingUp, Truck } from 'lucide-react'
 import Link from 'next/link'
-import React from 'react'
+import React, { useMemo, useCallback, useState, useRef, useEffect } from 'react'
 import { toast } from 'sonner'
 
 interface ProductCardProps {
@@ -61,29 +61,61 @@ const generateMockData = (productId: number | string) => {
   }
 }
 
-export function ProductCard({ product }: ProductCardProps) {
+function ProductCardComponent({ product }: ProductCardProps) {
   const { addToCart } = useCart()
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist()
   const { formatPrice } = useCurrency()
   const { theme, isLoading } = useThemeConfig()
+  
+  // Intersection Observer for lazy loading
+  const cardRef = useRef<HTMLDivElement>(null)
+  const [isVisible, setIsVisible] = useState(false)
+  
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true)
+          observer.disconnect() // Stop observing once visible
+        }
+      },
+      {
+        rootMargin: '50px', // Load 50px before entering viewport
+        threshold: 0.1
+      }
+    )
+    
+    if (cardRef.current) {
+      observer.observe(cardRef.current)
+    }
+    
+    return () => observer.disconnect()
+  }, [])
 
-  // Calculate discount percentage if compare_price exists
-  const discountPercentage = product.compare_price && product.compare_price > product.price
-    ? Math.round((1 - (product.price / product.compare_price)) * 100)
-    : 0
+  // Calculate discount percentage if compare_price exists - memoized
+  const discountPercentage = useMemo(() => {
+    return product.compare_price && product.compare_price > product.price
+      ? Math.round((1 - (product.price / product.compare_price)) * 100)
+      : 0
+  }, [product.price, product.compare_price])
 
-  // Get main image or fallback
-  const mainImage = product.images?.find(img => img.is_main) || product.images?.[0]
-  const imageUrl = mainImage?.url || '/placeholder-product.svg'
-  const imageAlt = mainImage?.alt || product.name
+  // Get main image or fallback - memoized
+  const { mainImage, imageUrl, imageAlt } = useMemo(() => {
+    const img = product.images?.find(img => img.is_main) || product.images?.[0]
+    return {
+      mainImage: img,
+      imageUrl: img?.url || '/placeholder-product.svg',
+      imageAlt: img?.alt || product.name
+    }
+  }, [product.images, product.name])
 
-  const numericId = safeIdToNumber(product.id)
+  const numericId = useMemo(() => safeIdToNumber(product.id), [product.id])
   const isWishlistItem = isInWishlist(numericId)
 
-  // Generate mock data for enhanced display
-  const mockData = generateMockData(product.id)
+  // Generate mock data for enhanced display - memoized to prevent re-calculation
+  const mockData = useMemo(() => generateMockData(product.id), [product.id])
 
-  const handleAddToCart = () => {
+  const handleAddToCart = useCallback(() => {
     addToCart({
       id: numericId,
       name: product.name,
@@ -92,9 +124,9 @@ export function ProductCard({ product }: ProductCardProps) {
       quantity: 1
     })
     toast.success(`${product.name} siparişe eklendi`)
-  }
+  }, [addToCart, numericId, product.name, product.price, imageUrl])
 
-  const handleWishlistToggle = () => {
+  const handleWishlistToggle = useCallback(() => {
     if (isWishlistItem) {
       removeFromWishlist(numericId)
       toast.success('Favorilerden çıkarıldı')
@@ -107,10 +139,20 @@ export function ProductCard({ product }: ProductCardProps) {
       })
       toast.success('Favorilere eklendi')
     }
-  }
+  }, [isWishlistItem, removeFromWishlist, addToWishlist, numericId, product.name, product.price, imageUrl])
 
   // Tema yüklenene kadar default style kullan
   const cardStyle = (!isLoading && theme?.productCardStyle) ? theme.productCardStyle : 'default'
+  
+  // Show placeholder until visible for performance
+  if (!isVisible) {
+    return (
+      <div 
+        ref={cardRef}
+        className="bg-gray-100 animate-pulse rounded-lg h-[420px] w-full"
+      />
+    )
+  }
 
   // Handler functions with preventDefault for proper touch handling
   const handleWishlist = (e: React.MouseEvent) => {
@@ -134,7 +176,7 @@ export function ProductCard({ product }: ProductCardProps) {
   // Default Style
   if (cardStyle === 'default') {
     return (
-      <div className="group relative">
+      <div className="group relative" ref={cardRef}>
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300 overflow-hidden h-[460px] md:h-[460px] sm:h-[380px] flex flex-col touch-manipulation">
           {/* Badges */}
           <div className="absolute top-3 left-3 right-3 flex justify-between items-start z-10 pointer-events-none">
@@ -276,7 +318,7 @@ export function ProductCard({ product }: ProductCardProps) {
   // Minimal Style
   if (cardStyle === 'minimal') {
     return (
-      <div className="group relative">
+      <div className="group relative" ref={cardRef}>
         <div className="bg-white rounded-lg hover:shadow-md transition-all duration-200 overflow-hidden h-[380px] flex flex-col touch-manipulation">
           {/* Image Container */}
           <Link
@@ -411,7 +453,7 @@ export function ProductCard({ product }: ProductCardProps) {
   // Trendyol Style
   if (cardStyle === 'trendyol') {
     return (
-      <div className="group relative">
+      <div className="group relative" ref={cardRef}>
         <div className="bg-white rounded-lg border border-gray-200 hover:border-orange-400 hover:shadow-lg transition-all duration-200 overflow-hidden h-[420px] flex flex-col touch-manipulation">
           {/* Image Container */}
           <Link
@@ -561,7 +603,7 @@ export function ProductCard({ product }: ProductCardProps) {
   // Wolt Style
   if (cardStyle === 'wolt') {
     return (
-      <div className="group relative">
+      <div className="group relative" ref={cardRef}>
         <div className="bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 h-[400px] flex flex-col touch-manipulation">
           {/* Image Container */}
           <Link
@@ -702,7 +744,7 @@ export function ProductCard({ product }: ProductCardProps) {
   // Detailed Style
   if (cardStyle === 'detailed') {
     return (
-      <div className="group relative">
+      <div className="group relative" ref={cardRef}>
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 overflow-hidden h-[520px] flex flex-col touch-manipulation">
           {/* Badges */}
           <div className="absolute top-4 left-4 right-4 flex justify-between items-start z-10 pointer-events-none">
@@ -880,7 +922,7 @@ export function ProductCard({ product }: ProductCardProps) {
   // Compact Style
   if (cardStyle === 'compact') {
     return (
-      <div className="group relative">
+      <div className="group relative" ref={cardRef}>
         <div className="bg-white rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 overflow-hidden h-[300px] flex flex-col touch-manipulation">
           {/* Compact Image */}
           <Link
@@ -1120,4 +1162,23 @@ export function ProductCard({ product }: ProductCardProps) {
       </div>
     </div>
   )
-} 
+}
+
+// Memoize the component to prevent unnecessary re-renders
+export const ProductCard = React.memo(ProductCardComponent, (prevProps, nextProps) => {
+  // Custom comparison function - only re-render if product data actually changes
+  const prevProduct = prevProps.product
+  const nextProduct = nextProps.product
+  
+  return (
+    prevProduct.id === nextProduct.id &&
+    prevProduct.name === nextProduct.name &&
+    prevProduct.price === nextProduct.price &&
+    prevProduct.compare_price === nextProduct.compare_price &&
+    prevProduct.stock_quantity === nextProduct.stock_quantity &&
+    prevProduct.is_active === nextProduct.is_active &&
+    prevProduct.is_featured === nextProduct.is_featured &&
+    JSON.stringify(prevProduct.images) === JSON.stringify(nextProduct.images) &&
+    JSON.stringify(prevProduct.tags) === JSON.stringify(nextProduct.tags)
+  )
+})

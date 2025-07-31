@@ -3,7 +3,7 @@
 import { ChefHat } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
-export function SimpleLogo({ className = "h-10 w-auto" }: { className?: string }) {
+export function SimpleLogo({ className = "h-10 w-auto", isMobile = false }: { className?: string, isMobile?: boolean }) {
   const [logoUrl, setLogoUrl] = useState<string>('')
   const [hasError, setHasError] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
@@ -15,12 +15,20 @@ export function SimpleLogo({ className = "h-10 w-auto" }: { className?: string }
 
       if (settings) {
         const parsed = JSON.parse(settings)
-        console.log('SimpleLogo - logo URL:', parsed.site_logo_url)
+        
+        // Mobile cihazlarda önce mobile_logo_url'yi kontrol et
+        let logoToUse = parsed.site_logo_url
+        if (isMobile && parsed.mobile_logo_url) {
+          logoToUse = parsed.mobile_logo_url
+          console.log('SimpleLogo - using mobile logo:', logoToUse)
+        } else {
+          console.log('SimpleLogo - using desktop logo:', logoToUse)
+        }
 
-        if (parsed.site_logo_url) {
+        if (logoToUse) {
           // If it's a base64 URL, use it directly
           // If it's a path, ensure it starts with /
-          let url = parsed.site_logo_url
+          let url = logoToUse
           if (!url.startsWith('data:') && !url.startsWith('/')) {
             url = '/' + url
           }
@@ -41,8 +49,15 @@ export function SimpleLogo({ className = "h-10 w-auto" }: { className?: string }
         try {
           if (e.newValue) {
             const parsed = JSON.parse(e.newValue)
-            if (parsed.site_logo_url) {
-              let url = parsed.site_logo_url
+            
+            // Mobile cihazlarda önce mobile_logo_url'yi kontrol et
+            let logoToUse = parsed.site_logo_url
+            if (isMobile && parsed.mobile_logo_url) {
+              logoToUse = parsed.mobile_logo_url
+            }
+            
+            if (logoToUse) {
+              let url = logoToUse
               if (!url.startsWith('data:') && !url.startsWith('/')) {
                 url = '/' + url
               }
@@ -62,8 +77,15 @@ export function SimpleLogo({ className = "h-10 w-auto" }: { className?: string }
         const settings = localStorage.getItem('butik-firin-site-settings')
         if (settings) {
           const parsed = JSON.parse(settings)
-          if (parsed.site_logo_url) {
-            let url = parsed.site_logo_url
+          
+          // Mobile cihazlarda önce mobile_logo_url'yi kontrol et
+          let logoToUse = parsed.site_logo_url
+          if (isMobile && parsed.mobile_logo_url) {
+            logoToUse = parsed.mobile_logo_url
+          }
+          
+          if (logoToUse) {
+            let url = logoToUse
             if (!url.startsWith('data:') && !url.startsWith('/')) {
               url = '/' + url
             }

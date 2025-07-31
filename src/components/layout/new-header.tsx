@@ -44,6 +44,7 @@ export function NewHeader() {
     logoSize: 'medium' as 'small' | 'medium' | 'large'
   })
   const [isMounted, setIsMounted] = useState(false)
+  const [isMobileDevice, setIsMobileDevice] = useState(false)
 
   const { getTotalItems, toggleCart } = useCart()
   const { getTotalWishlistItems } = useWishlist()
@@ -54,6 +55,16 @@ export function NewHeader() {
   // Component mount kontrolü
   useEffect(() => {
     setIsMounted(true)
+    
+    // Mobile detection
+    const checkIsMobile = () => {
+      setIsMobileDevice(window.innerWidth < 768)
+    }
+    
+    checkIsMobile()
+    window.addEventListener('resize', checkIsMobile)
+    
+    return () => window.removeEventListener('resize', checkIsMobile)
   }, [])
 
   // Logo ayarlarını yükle ve değişiklikleri dinle
@@ -190,7 +201,7 @@ export function NewHeader() {
                     <div className="flex flex-col h-full">
                       <div className="p-6 border-b bg-orange-50">
                         <div className="flex items-center gap-3">
-                          <SimpleLogo className="w-10 h-10" />
+                          <SimpleLogo className="w-10 h-10" isMobile={true} />
                           {isMounted && logoSettings.displayMode === 'logo_with_text' && (
                             <div>
                               <h1 className="text-xl font-bold text-orange-600">{logoSettings.logoText}</h1>
@@ -281,7 +292,7 @@ export function NewHeader() {
                 {/* Logo */}
                 <div className="flex items-center">
                   <Link href="/" className="flex items-center gap-3">
-                    <SimpleLogo className={getLogoSize()} />
+                    <SimpleLogo className={getLogoSize()} isMobile={isMobileDevice} />
                     {isMounted && logoSettings.displayMode === 'logo_with_text' && (
                       <div className="hidden sm:block">
                         <h1 className="text-2xl font-bold text-orange-600">{logoSettings.logoText}</h1>

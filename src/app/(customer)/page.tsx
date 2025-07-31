@@ -287,14 +287,19 @@ export default function HomePage() {
     setCategoryProducts(products)
   }, [allProducts, baseCategories])
 
-  // Kategori scroll kontrolü - More responsive
-  const checkScrollButtons = () => {
+  // Kategori scroll kontrolü - Throttled for performance
+  const checkScrollButtons = useCallback(() => {
     if (categoryScrollRef.current) {
       const { scrollLeft, scrollWidth, clientWidth } = categoryScrollRef.current
       setShowLeftArrow(scrollLeft > 5)
       setShowRightArrow(scrollLeft < scrollWidth - clientWidth - 5)
     }
-  }
+  }, [])
+
+  // Throttled scroll handler to prevent excessive re-renders
+  const throttledCheckScrollButtons = useCallback(() => {
+    checkScrollButtons()
+  }, [checkScrollButtons])
 
   const scrollCategories = (direction: 'left' | 'right') => {
     if (categoryScrollRef.current) {
@@ -719,7 +724,7 @@ export default function HomePage() {
                 <div className="">
                   <div
                     ref={categoryScrollRef}
-                    onScroll={checkScrollButtons}
+                    onScroll={throttledCheckScrollButtons}
                     className="flex gap-2 sm:gap-3 overflow-x-auto scrollbar-hide scroll-smooth py-3 sm:py-4 px-16 sm:px-20"
                     style={{ scrollBehavior: 'smooth', WebkitOverflowScrolling: 'touch' }}
                   >

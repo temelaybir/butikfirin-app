@@ -22,8 +22,10 @@ interface SiteSettings {
   site_slogan: string | null
   site_logo_url: string
   site_logo_dark_url: string | null
+  mobile_logo_url: string | null
   logo_display_mode: 'logo_only' | 'logo_with_text'
   logo_size: 'small' | 'medium' | 'large'
+  mobile_logo_size: 'small' | 'medium' | 'large'
   favicon_url: string
   social_image_url: string
   meta_keywords: string
@@ -59,6 +61,7 @@ export default function SiteSettingsPage() {
   const [uploading, setUploading] = useState({
     logo: false,
     logoDark: false,
+    mobileLogo: false,
     favicon: false,
     social: false
   })
@@ -66,6 +69,7 @@ export default function SiteSettingsPage() {
   // File input refs
   const logoInputRef = useRef<HTMLInputElement>(null)
   const logoDarkInputRef = useRef<HTMLInputElement>(null)
+  const mobileLogoInputRef = useRef<HTMLInputElement>(null)
   const faviconInputRef = useRef<HTMLInputElement>(null)
   const socialInputRef = useRef<HTMLInputElement>(null)
 
@@ -87,8 +91,10 @@ export default function SiteSettingsPage() {
           site_slogan: 'Her gün taze, her lokma lezzet',
           site_logo_url: '/images/logo.png',
           site_logo_dark_url: null,
+          mobile_logo_url: null,
           logo_display_mode: 'logo_with_text',
           logo_size: 'medium',
+          mobile_logo_size: 'medium',
           favicon_url: '/favicon.ico',
           social_image_url: '/social-preview.jpg',
           meta_keywords: 'pastane, fırın, taze, doğal, lezzetli',
@@ -149,8 +155,9 @@ export default function SiteSettingsPage() {
   }
 
   // Logo yükleme fonksiyonu
-  const handleLogoUpload = async (file: File, logoType: 'logo' | 'logo-dark' | 'favicon' | 'social') => {
-    const uploadKey = logoType === 'logo-dark' ? 'logoDark' : logoType
+  const handleLogoUpload = async (file: File, logoType: 'logo' | 'logo-dark' | 'mobile-logo' | 'favicon' | 'social') => {
+    const uploadKey = logoType === 'logo-dark' ? 'logoDark' : 
+                     logoType === 'mobile-logo' ? 'mobileLogo' : logoType
     
     setUploading(prev => ({ ...prev, [uploadKey]: true }))
 
@@ -163,19 +170,21 @@ export default function SiteSettingsPage() {
         // URL'i ilgili alana kaydet
         const urlField = logoType === 'logo' ? 'site_logo_url' : 
                         logoType === 'logo-dark' ? 'site_logo_dark_url' :
+                        logoType === 'mobile-logo' ? 'mobile_logo_url' :
                         logoType === 'favicon' ? 'favicon_url' : 'social_image_url'
         
         updateSetting(urlField as keyof SiteSettings, base64)
         
         const successMessage = logoType === 'logo' ? 'Logo' : 
                               logoType === 'logo-dark' ? 'Koyu tema logosu' : 
+                              logoType === 'mobile-logo' ? 'Mobil logo' :
                               logoType === 'favicon' ? 'Favicon' : 'Sosyal medya görseli'
         
         toast.success(`${successMessage} başarıyla yüklendi`)
         setUploading(prev => ({ ...prev, [uploadKey]: false }))
         
         // If logo updated, trigger immediate update
-        if (logoType === 'logo' && settings) {
+        if ((logoType === 'logo' || logoType === 'mobile-logo') && settings) {
           const updatedSettings = { ...settings, [urlField]: base64 }
           localStorage.setItem('butik-firin-site-settings', JSON.stringify(updatedSettings))
           window.dispatchEvent(new Event('siteSettingsUpdated'))
@@ -196,7 +205,7 @@ export default function SiteSettingsPage() {
   }
 
   // Dosya seçme handler'ı
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>, logoType: 'logo' | 'logo-dark' | 'favicon' | 'social') => {
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>, logoType: 'logo' | 'logo-dark' | 'mobile-logo' | 'favicon' | 'social') => {
     const file = e.target.files?.[0]
     if (!file) {
       return
@@ -512,6 +521,42 @@ export default function SiteSettingsPage() {
                 </p>
               </div>
 
+              {/* Mobil Logo Boyutu */}
+              <div className="space-y-3">
+                <Label htmlFor="mobile_logo_size">Mobil Logo Boyutu</Label>
+                <Select 
+                  value={settings.mobile_logo_size}
+                  onValueChange={(value: 'small' | 'medium' | 'large') => updateSetting('mobile_logo_size', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Mobil logo boyutunu seçin" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="small">
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 bg-primary rounded flex items-center justify-center text-xs text-white">S</div>
+                        <span>Küçük (32px)</span>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="medium">
+                      <div className="flex items-center gap-2">
+                        <div className="w-6 h-6 bg-primary rounded flex items-center justify-center text-xs text-white">M</div>
+                        <span>Orta (40px)</span>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="large">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 bg-primary rounded flex items-center justify-center text-sm text-white">L</div>
+                        <span>Büyük (48px)</span>
+                      </div>
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-sm text-muted-foreground">
+                  Mobil cihazlarda gösterilecek logo boyutunu seçin
+                </p>
+              </div>
+
               <Separator />
 
               {/* Koyu Tema Logosu */}
@@ -557,6 +602,57 @@ export default function SiteSettingsPage() {
                         <img
                           src={settings.site_logo_dark_url}
                           alt="Koyu Tema Logosu"
+                          className="object-contain max-w-full max-h-16"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Mobil Logo */}
+              <div className="space-y-4">
+                <Label htmlFor="mobile_logo_url">Mobil Logo (İsteğe Bağlı)</Label>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Input
+                      id="mobile_logo_url"
+                      value={settings.mobile_logo_url || ''}
+                      onChange={(e) => updateSetting('mobile_logo_url', e.target.value)}
+                      placeholder="/logo-mobile.svg"
+                    />
+                    <Button 
+                      type="button"
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => mobileLogoInputRef.current?.click()}
+                      disabled={uploading.mobileLogo}
+                      className="w-full"
+                    >
+                      {uploading.mobileLogo ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Yükleniyor...
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="w-4 h-4 mr-2" />
+                          Mobil Logo Yükle
+                        </>
+                      )}
+                    </Button>
+                    <p className="text-xs text-muted-foreground">
+                      Mobil cihazlar için optimize edilmiş logo
+                    </p>
+                  </div>
+                  
+                  {settings.mobile_logo_url && (
+                    <div className="space-y-2">
+                      <Label>Önizleme</Label>
+                      <div className="relative border rounded-lg p-4 bg-white">
+                        <img
+                          src={settings.mobile_logo_url}
+                          alt="Mobil Logo"
                           className="object-contain max-w-full max-h-16"
                         />
                       </div>
@@ -1037,6 +1133,13 @@ export default function SiteSettingsPage() {
         type="file"
         accept="image/*"
         onChange={(e) => handleFileSelect(e, 'logo-dark')}
+        className="hidden"
+      />
+      <input
+        ref={mobileLogoInputRef}
+        type="file"
+        accept="image/*"
+        onChange={(e) => handleFileSelect(e, 'mobile-logo')}
         className="hidden"
       />
       <input
