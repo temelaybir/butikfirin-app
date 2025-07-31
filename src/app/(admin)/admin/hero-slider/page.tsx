@@ -64,18 +64,18 @@ export default function HeroSliderAdminPage() {
       if (savedSlides) {
         setSlides(JSON.parse(savedSlides))
       } else {
-        // Default slides
+        // Default slides with Unsplash images
         const defaultSlides = [
           {
             id: '1',
             title: 'Taze & Lezzetli',
             subtitle: 'Her gün taze üretim, geleneksel tarifler',
-            image_url: '/images/hero/hero-1.jpg',
+            image_url: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=1200&h=600&fit=crop&q=80',
             mobile_image_url: null,
-            link_url: null,
+            link_url: '#menu',
             button_text: 'Menüyü Keşfet',
             badge_text: null,
-            order_position: 0,
+            order_position: 1,
             is_active: true,
             is_raw_image: false,
             show_on_mobile: true,
@@ -86,15 +86,15 @@ export default function HeroSliderAdminPage() {
             id: '2',
             title: '%20 İndirim',
             subtitle: 'Tüm pastalarda geçerli',
-            image_url: '/images/hero/hero-2.jpg',
+            image_url: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600&h=400&fit=crop&q=80',
             mobile_image_url: null,
-            link_url: null,
+            link_url: '#pastalar',
             button_text: 'Hemen Alışveriş',
             badge_text: null,
-            order_position: 1,
+            order_position: 2,
             is_active: true,
             is_raw_image: false,
-            show_on_mobile: false,
+            show_on_mobile: true,
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString()
           },
@@ -102,15 +102,15 @@ export default function HeroSliderAdminPage() {
             id: '3',
             title: 'Günün Menüsü',
             subtitle: 'Özel fiyatlarla',
-            image_url: '/images/hero/hero-3.jpg',
+            image_url: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600&h=400&fit=crop&q=80',
             mobile_image_url: null,
-            link_url: null,
+            link_url: '#menu',
             button_text: 'Menüyü Gör',
             badge_text: null,
-            order_position: 2,
+            order_position: 3,
             is_active: true,
             is_raw_image: false,
-            show_on_mobile: false,
+            show_on_mobile: true,
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString()
           }
