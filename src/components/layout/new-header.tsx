@@ -144,9 +144,17 @@ export function NewHeader() {
     setIsOrderDrawerOpen(false)
   }
 
-  // Logo boyutunu hesapla - sabit boyut mobil flickering'i önlemek için
+  // Logo boyutunu hesapla - iPhone 16 Plus compatibility
   const getLogoSize = () => {
-    return 'h-10 w-auto' // Sabit boyut
+    if (typeof window !== 'undefined') {
+      // iPhone 16 Plus has specific viewport: 430x932
+      const isIPhone16Plus = window.innerWidth === 430 && window.innerHeight === 932
+      if (isIPhone16Plus) {
+        console.log('iPhone 16 Plus detected, using optimized logo size')
+        return 'h-12 w-auto' // Slightly larger for iPhone 16 Plus
+      }
+    }
+    return 'h-10 w-auto' // Default size
   }
 
   return (
@@ -186,7 +194,12 @@ export function NewHeader() {
           isScrolled && "shadow-md"
         )}>
           <div className="container mx-auto px-4">
-            <div className="flex items-center justify-between" style={{ height: '64px', padding: '8px 0' }}>
+            <div className="flex items-center justify-between" style={{ 
+              height: '64px', 
+              padding: '8px 0',
+              // iPhone 16 Plus viewport compatibility
+              minHeight: '64px'
+            }}>
               {/* Mobile Menu & Logo */}
               <div className="flex items-center gap-4">
                 {/* Mobile Menu */}

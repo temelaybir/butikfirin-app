@@ -7,6 +7,7 @@ export function SimpleLogo({ className = "h-10 w-auto", isMobile = false }: { cl
   const [logoUrl, setLogoUrl] = useState<string>('')
   const [hasError, setHasError] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+  const [forceShowFallback, setForceShowFallback] = useState(false)
 
   useEffect(() => {
     try {
@@ -18,11 +19,18 @@ export function SimpleLogo({ className = "h-10 w-auto", isMobile = false }: { cl
         
         // Mobile cihazlarda önce mobile_logo_url'yi kontrol et
         let logoToUse = parsed.site_logo_url
+        console.log('SimpleLogo - raw settings:', {
+          site_logo_url: parsed.site_logo_url,
+          mobile_logo_url: parsed.mobile_logo_url,
+          isMobile,
+          windowWidth: typeof window !== 'undefined' ? window.innerWidth : 'SSR'
+        })
+        
         if (isMobile && parsed.mobile_logo_url) {
           logoToUse = parsed.mobile_logo_url
           console.log('SimpleLogo - using mobile logo:', logoToUse)
         } else {
-          console.log('SimpleLogo - using desktop logo:', logoToUse)
+          console.log('SimpleLogo - using desktop logo:', logoToUse, 'reason:', !isMobile ? 'not mobile' : 'no mobile logo')
         }
 
         if (logoToUse) {
@@ -32,7 +40,22 @@ export function SimpleLogo({ className = "h-10 w-auto", isMobile = false }: { cl
           if (!url.startsWith('data:') && !url.startsWith('/')) {
             url = '/' + url
           }
+          console.log('SimpleLogo - final URL set:', url, 'type:', url.startsWith('data:') ? 'base64' : 'path')
           setLogoUrl(url)
+        } else {
+          console.log('SimpleLogo - no logoToUse found, checking fallback')
+          // iPhone 16 Plus'ta prodda logo yoksa fallback kullan
+          if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
+            console.log('SimpleLogo - production mode, using fallback logo')
+            setLogoUrl('/images/logo.png') // Fallback logo
+          }
+        }
+      } else {
+        console.log('SimpleLogo - no settings found in localStorage')
+        // Production fallback
+        if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
+          console.log('SimpleLogo - no localStorage, using fallback logo')
+          setLogoUrl('/images/logo.png')
         }
       }
     } catch (error) {
@@ -40,6 +63,19 @@ export function SimpleLogo({ className = "h-10 w-auto", isMobile = false }: { cl
     } finally {
       setIsLoading(false)
     }
+    
+    // iPhone 16 Plus timeout fallback
+    const timer = setTimeout(() => {
+      if (!logoUrl && typeof window !== 'undefined') {
+        const isIPhone = /iPhone|iPad|iPod/.test(navigator.userAgent)
+        if (isIPhone) {
+          console.log('iPhone timeout - forcing fallback logo')
+          setForceShowFallback(true)
+        }
+      }
+    }, 2000) // 2 second timeout for iPhone
+    
+    return () => clearTimeout(timer)
   }, [])
 
   // Storage değişikliklerini dinle
@@ -107,26 +143,61 @@ export function SimpleLogo({ className = "h-10 w-auto", isMobile = false }: { cl
     }
   }, [])
 
-  console.log('SimpleLogo render - logoUrl:', logoUrl, 'hasError:', hasError, 'isLoading:', isLoading)
+  console.log('SimpleLogo render - logoUrl:', logoUrl, 'hasError:', hasError, 'isLoading:', isLoading, 'isMobile:', isMobile)
+  console.log('SimpleLogo viewport info:', typeof window !== 'undefined' ? {
+    innerWidth: window.innerWidth,
+    innerHeight: window.innerHeight,
+    userAgent: navigator.userAgent.substring(0, 100)
+  } : 'SSR')
 
-  if (isLoading || !logoUrl || hasError) {
+  if (isLoading || !logoUrl || hasError || forceShowFallback) {
+    console.log('SimpleLogo fallback icon shown - reason:', { isLoading, hasLogo: !!logoUrl, hasError, forceShowFallback })
     return (
-      <div className={`${className} bg-orange-600 rounded-lg flex items-center justify-center shadow-lg min-w-[2.5rem]`}>
-        <ChefHat className="text-white w-4 h-4 sm:w-6 sm:h-6" />
+      <div className={`${className} bg-orange-600 rounded-lg flex items-center justify-center shadow-lg min-w-[2.5rem] relative`}>
+        <ChefHat className="text-white w-4 h-4 sm:w-6 sm:h-6 z-10" />
+        {/* Debug overlay for development */}
+        {process.env.NODE_ENV === 'development' && (
+          <div className="absolute -top-8 left-0 text-xs bg-red-500 text-white px-1 rounded z-20">
+            {isLoading ? 'Loading' : !logoUrl ? 'No URL' : hasError ? 'Error' : 'Timeout'}
+          </div>
+        )}
       </div>
     )
   }
 
   // Use the logo URL from localStorage
+  console.log('SimpleLogo rendering image with URL:', logoUrl)
   return (
     <img
       src={logoUrl}
       alt="Butik Fırın Logo"
       className={`${className} object-contain`}
+      style={{
+        display: 'block',
+        maxWidth: '100%',
+        height: 'auto',
+        // iPhone Chrome compatibility fixes
+        WebkitTransform: 'translateZ(0)',
+        transform: 'translateZ(0)',
+        WebkitBackfaceVisibility: 'hidden',
+        backfaceVisibility: 'hidden',
+        // Force hardware acceleration on iOS
+        WebkitPerspective: '1000px',
+        perspective: '1000px',
+        // Prevent iOS image loading issues
+        WebkitTouchCallout: 'none',
+        WebkitUserSelect: 'none',
+        userSelect: 'none'
+      }}
+      onLoad={() => {
+        console.log('SimpleLogo image loaded successfully:', logoUrl)
+      }}
       onError={(e) => {
-        console.error('Logo image failed to load:', logoUrl)
+        console.error('SimpleLogo image failed to load:', logoUrl, e)
         setHasError(true)
       }}
+      loading="eager"
+      decoding="async"
     />
   )
 }
