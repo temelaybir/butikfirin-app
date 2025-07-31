@@ -318,79 +318,78 @@ export default function HomePage() {
         <section className="w-full bg-white py-4 sm:py-6 mb-4">
           <div className="container mx-auto px-4 max-w-7xl">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 min-h-[300px] lg:min-h-[400px]">
-            {/* Sol: Hero Büyük Banner */}
-            <div className="lg:col-span-2 h-[300px] lg:h-[400px]">
-              <div className="relative rounded-xl overflow-hidden bg-gray-100 h-full shadow-lg">
-                {/* Hero Image with fallback */}
-                <img
-                  src={heroSlides[0]?.image_url}
-                  alt={heroSlides[0]?.title || 'Hero Banner'}
-                  className="w-full h-full object-cover"
-                />
-                
-                {/* Overlay Content */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent">
-                  <div className="absolute bottom-0 left-0 right-0 p-6 lg:p-8">
-                    <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-2">
-                      {heroSlides[0]?.title}
-                    </h2>
-                    {heroSlides[0]?.subtitle && (
-                      <p className="text-base sm:text-lg text-white/90 mb-4">
-                        {heroSlides[0].subtitle}
-                      </p>
-                    )}
-                    {heroSlides[0]?.button_text && heroSlides[0]?.link_url && (
-                      <Link href={heroSlides[0].link_url}>
-                        <Button className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2.5 text-sm font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all">
-                          {heroSlides[0].button_text}
-                        </Button>
-                      </Link>
-                    )}
+              {/* Sol: Hero Büyük Banner */}
+              <div className="lg:col-span-2 h-[300px] lg:h-[400px]">
+                <div className="relative rounded-xl overflow-hidden bg-gray-100 h-full shadow-lg">
+                  {/* Hero Image with fallback */}
+                  <img
+                    src={heroSlides[0]?.image_url}
+                    alt={heroSlides[0]?.title || 'Hero Banner'}
+                    className="w-full h-full object-cover"
+                  />
+                  
+                  {/* Overlay Content */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent">
+                    <div className="absolute bottom-0 left-0 right-0 p-6 lg:p-8">
+                      <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-2">
+                        {heroSlides[0]?.title}
+                      </h2>
+                      {heroSlides[0]?.subtitle && (
+                        <p className="text-base sm:text-lg text-white/90 mb-4">
+                          {heroSlides[0].subtitle}
+                        </p>
+                      )}
+                      {heroSlides[0]?.button_text && heroSlides[0]?.link_url && (
+                        <Link href={heroSlides[0].link_url}>
+                          <Button className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2.5 text-sm font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all">
+                            {heroSlides[0].button_text}
+                          </Button>
+                        </Link>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* Sağ: 2 Küçük Banner */}
-            <div className="lg:col-span-1 h-[300px] lg:h-[400px]">
-              <div className="grid grid-cols-2 lg:grid-cols-1 gap-4 h-full">
-                {heroSlides.slice(1, 3).map((slide, index) => (
-                  <div
-                    key={slide.id}
-                    className="relative rounded-xl overflow-hidden bg-gray-100 h-full shadow-lg"
-                  >
-                    {/* Banner Image */}
-                    <img
-                      src={slide.image_url}
-                      alt={slide.title}
-                      className="w-full h-full object-cover"
-                    />
-                    
-                    {/* Overlay Content */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent">
-                      <div className="absolute bottom-0 left-0 right-0 p-4">
-                        <h3 className="text-lg lg:text-xl font-bold text-white mb-1">
-                          {slide.title}
-                        </h3>
-                        {slide.subtitle && (
-                          <p className="text-sm text-white/90 mb-2">
-                            {slide.subtitle}
-                          </p>
-                        )}
-                        {slide.button_text && slide.link_url && (
-                          <Link href={slide.link_url}>
-                            <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-1.5 text-xs font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all">
-                              {slide.button_text}
-                            </Button>
-                          </Link>
-                        )}
+              {/* Sağ: 2 Küçük Banner */}
+              <div className="lg:col-span-1 h-[300px] lg:h-[400px]">
+                <div className="grid grid-cols-2 lg:grid-cols-1 gap-4 h-full">
+                  {heroSlides.slice(1, 3).map((slide, index) => (
+                    <div
+                      key={slide.id}
+                      className="relative rounded-xl overflow-hidden bg-gray-100 h-full shadow-lg"
+                    >
+                      {/* Banner Image */}
+                      <img
+                        src={slide.image_url}
+                        alt={slide.title}
+                        className="w-full h-full object-cover"
+                      />
+                      
+                      {/* Overlay Content */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent">
+                        <div className="absolute bottom-0 left-0 right-0 p-4">
+                          <h3 className="text-lg lg:text-xl font-bold text-white mb-1">
+                            {slide.title}
+                          </h3>
+                          {slide.subtitle && (
+                            <p className="text-sm text-white/90 mb-2">
+                              {slide.subtitle}
+                            </p>
+                          )}
+                          {slide.button_text && slide.link_url && (
+                            <Link href={slide.link_url}>
+                              <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-1.5 text-xs font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all">
+                                {slide.button_text}
+                              </Button>
+                            </Link>
+                          )}
+                        </div>
                       </div>
                     </div>
-                    </div>
-                  )
-                })}
+                  ))}
+                </div>
               </div>
-            </div>
           </div>
         </div>
       </section>
