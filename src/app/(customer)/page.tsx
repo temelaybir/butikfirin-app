@@ -77,8 +77,23 @@ export default function HomePage() {
   const categoryScrollRef = useRef<HTMLDivElement>(null)
   const [showLeftArrow, setShowLeftArrow] = useState(false)
   const [showRightArrow, setShowRightArrow] = useState(true)
+  const [isMobile, setIsMobile] = useState(false)
 
   const { addToCart } = useCart()
+
+  // Mobile detection
+  useEffect(() => {
+    const checkIsMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    
+    // Initial check
+    checkIsMobile()
+    
+    // Listen to resize events
+    window.addEventListener('resize', checkIsMobile)
+    return () => window.removeEventListener('resize', checkIsMobile)
+  }, [])
 
   // Load hero banners from API
   const loadHeroBanners = async () => {
@@ -96,8 +111,7 @@ export default function HomePage() {
         }
         
         banners.forEach((banner: any) => {
-          // Mobile kontrolü
-          const isMobile = window.innerWidth < 768
+          // Mobile kontrolü - state'den al
           const shouldShow = banner.is_active && 
                            (!isMobile || banner.show_on_mobile !== false) &&
                            bannerMap[banner.position] === null
@@ -140,14 +154,13 @@ export default function HomePage() {
       const savedSlides = localStorage.getItem('butik-firin-hero-slides')
       if (savedSlides) {
         const slides = JSON.parse(savedSlides)
-        const isMobile = window.innerWidth < 640
 
         // Filter only active slides
         const activeSlides = slides
           .filter((slide: any) => {
             // Check if slide is active
             if (!slide.is_active) return false
-            // Check mobile visibility
+            // Check mobile visibility - state'den al
             if (isMobile && slide.show_on_mobile === false) return false
             return true
           })
@@ -347,9 +360,13 @@ export default function HomePage() {
       {/* Hero Banner Section */}
       <section className="w-full bg-white py-2 sm:py-4 lg:py-6 mb-2 sm:mb-4">
         <div className="container mx-auto px-4 max-w-7xl">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 sm:gap-4 min-h-[200px] sm:min-h-[250px] lg:min-h-[400px]">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 sm:gap-4 min-h-[200px] sm:min-h-[250px] lg:min-h-[400px]" style={{
+            minHeight: isMobile ? '200px' : typeof window !== 'undefined' && window.innerWidth >= 1024 ? '400px' : '250px'
+          }}>
             {/* Sol: Hero Büyük Banner */}
-            <div className="lg:col-span-2 h-[200px] sm:h-[250px] lg:h-[400px]">
+            <div className={`lg:col-span-2 h-[200px] sm:h-[250px] lg:h-[400px] ${
+              heroBanners.main && isMobile && heroBanners.main.show_on_mobile === false ? 'hidden' : ''
+            }`}>
               <div className="relative rounded-xl overflow-hidden bg-gray-100 h-full shadow-lg group">
                 {heroBanners.main ? (
                   <>
@@ -397,10 +414,14 @@ export default function HomePage() {
             </div>
 
             {/* Sağ: 2 Küçük Banner */}
-            <div className="lg:col-span-1 h-[200px] sm:h-[250px] lg:h-[400px]">
+            <div className={`lg:col-span-1 h-[200px] sm:h-[250px] lg:h-[400px] ${
+              isMobile && (!heroBanners.side1?.show_on_mobile && !heroBanners.side2?.show_on_mobile) ? 'hidden' : ''
+            }`}>
               <div className="grid grid-rows-2 gap-2 sm:gap-4 h-full">
                 {/* Banner 1 - Sağ Üst */}
-                <div className="relative rounded-xl overflow-hidden bg-gray-100 shadow-lg h-full group">
+                <div className={`relative rounded-xl overflow-hidden bg-gray-100 shadow-lg h-full group ${
+                  heroBanners.side1 && isMobile && heroBanners.side1.show_on_mobile === false ? 'hidden' : ''
+                }`}>
                   {heroBanners.side1 ? (
                     <>
                       <img
@@ -446,7 +467,9 @@ export default function HomePage() {
                 </div>
 
                 {/* Banner 2 - Sağ Alt */}
-                <div className="relative rounded-xl overflow-hidden bg-gray-100 shadow-lg h-full group">
+                <div className={`relative rounded-xl overflow-hidden bg-gray-100 shadow-lg h-full group ${
+                  heroBanners.side2 && isMobile && heroBanners.side2.show_on_mobile === false ? 'hidden' : ''
+                }`}>
                   {heroBanners.side2 ? (
                     <>
                       <img

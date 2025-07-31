@@ -133,13 +133,9 @@ export function NewHeader() {
     setIsOrderDrawerOpen(false)
   }
 
-  // Logo boyutunu hesapla
+  // Logo boyutunu hesapla - sabit boyut mobil flickering'i önlemek için
   const getLogoSize = () => {
-    switch (logoSettings.logoSize) {
-      case 'small': return 'h-8 w-auto sm:h-12'
-      case 'large': return 'h-12 w-auto sm:h-16'
-      default: return 'h-10 w-auto sm:h-14'
-    }
+    return 'h-10 w-auto' // Sabit boyut
   }
 
   return (
@@ -179,7 +175,7 @@ export function NewHeader() {
           isScrolled && "shadow-md"
         )}>
           <div className="container mx-auto px-4">
-            <div className="flex items-center justify-between h-16 sm:h-20 py-2 sm:py-3">
+            <div className="flex items-center justify-between" style={{ height: '64px', padding: '8px 0' }}>
               {/* Mobile Menu & Logo */}
               <div className="flex items-center gap-4">
                 {/* Mobile Menu */}

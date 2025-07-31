@@ -1,22 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { createAdminSupabaseClient } from '@/lib/supabase/admin-client'
 import { validateAdminAuth } from '@/lib/auth/admin-api-auth'
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = await createClient()
+    // Use admin client to bypass RLS
+    const adminSupabase = createAdminSupabaseClient()
     
-    const { data: banners, error } = await supabase
+    const { data: banners, error } = await adminSupabase
       .from('hero_banners')
       .select('*')
       .order('display_order', { ascending: true })
 
     if (error) {
+      console.error('🔥 Hero banners GET error:', error)
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
     return NextResponse.json({ banners })
   } catch (error: any) {
+    console.error('🔥 Hero banners GET catch error:', error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }
@@ -31,10 +35,10 @@ export async function POST(request: NextRequest) {
     //   return NextResponse.json({ error: validation.error || 'Unauthorized' }, { status: 401 })
     // }
 
-    const supabase = await createClient()
+    const adminSupabase = createAdminSupabaseClient()
     const body = await request.json()
 
-    const { data: banner, error } = await supabase
+    const { data: banner, error } = await adminSupabase
       .from('hero_banners')
       .insert({
         position: body.position,
@@ -72,7 +76,7 @@ export async function PUT(request: NextRequest) {
     //   return NextResponse.json({ error: validation.error || 'Unauthorized' }, { status: 401 })
     // }
 
-    const supabase = await createClient()
+    const adminSupabase = createAdminSupabaseClient()
     const { searchParams } = new URL(request.url)
     const id = searchParams.get('id')
 
@@ -82,7 +86,7 @@ export async function PUT(request: NextRequest) {
 
     const body = await request.json()
 
-    const { data: banner, error } = await supabase
+    const { data: banner, error } = await adminSupabase
       .from('hero_banners')
       .update({
         position: body.position,
@@ -121,7 +125,7 @@ export async function DELETE(request: NextRequest) {
     //   return NextResponse.json({ error: validation.error || 'Unauthorized' }, { status: 401 })
     // }
 
-    const supabase = await createClient()
+    const adminSupabase = createAdminSupabaseClient()
     const { searchParams } = new URL(request.url)
     const id = searchParams.get('id')
 
@@ -129,7 +133,7 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'Banner ID required' }, { status: 400 })
     }
 
-    const { error } = await supabase
+    const { error } = await adminSupabase
       .from('hero_banners')
       .delete()
       .eq('id', id)
