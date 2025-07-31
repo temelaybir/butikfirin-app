@@ -76,8 +76,31 @@ export default function HomePage() {
 
   const { addToCart } = useCart()
 
-  // Load hero slides from localStorage
-  const loadSlides = () => {
+  // Load hero slides from API
+  const loadSlides = async () => {
+    try {
+      // First try to load from API
+      const response = await fetch('/api/hero-slides')
+      if (response.ok) {
+        const data = await response.json()
+        const slides = data.slides || []
+
+        // Separate slides by position
+        const topSlides = slides.filter((slide: any) => slide.order_position >= 1 && slide.order_position <= 4)
+        const bottomSlidesData = slides.filter((slide: any) => slide.order_position >= 5 && slide.order_position <= 8)
+
+        setHeroSlides(topSlides)
+        setBottomSlides(bottomSlidesData)
+
+        // Save to localStorage for offline use
+        localStorage.setItem('butik-firin-hero-slides', JSON.stringify(slides))
+        return
+      }
+    } catch (error) {
+      console.error('Error loading hero slides from API:', error)
+    }
+
+    // Fallback to localStorage if API fails
     try {
       const savedSlides = localStorage.getItem('butik-firin-hero-slides')
       if (savedSlides) {
@@ -103,7 +126,7 @@ export default function HomePage() {
         setBottomSlides(bottomSlidesData)
       }
     } catch (error) {
-      console.error('Error loading hero slides:', error)
+      console.error('Error loading hero slides from localStorage:', error)
     }
   }
 
