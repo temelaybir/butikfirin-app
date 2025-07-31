@@ -27,7 +27,7 @@ CREATE POLICY "Admin can manage hero banners" ON hero_banners
     EXISTS (
       SELECT 1 FROM admin_users
       WHERE id = auth.uid()
-      AND status = 'active'
+      AND is_active = true
     )
   );
 
@@ -61,7 +61,7 @@ CREATE POLICY "Admin can upload hero banner images" ON storage.objects FOR INSER
     EXISTS (
       SELECT 1 FROM admin_users
       WHERE id = auth.uid()
-      AND status = 'active'
+      AND is_active = true
     )
   );
 
@@ -71,7 +71,7 @@ CREATE POLICY "Admin can update hero banner images" ON storage.objects FOR UPDAT
     EXISTS (
       SELECT 1 FROM admin_users
       WHERE id = auth.uid()
-      AND status = 'active'
+      AND is_active = true
     )
   );
 
@@ -81,6 +81,6 @@ CREATE POLICY "Admin can delete hero banner images" ON storage.objects FOR DELET
     EXISTS (
       SELECT 1 FROM admin_users
       WHERE id = auth.uid()
-      AND status = 'active'
+      AND is_active = true
     )
   );
