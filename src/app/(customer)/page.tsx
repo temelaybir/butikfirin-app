@@ -26,6 +26,7 @@ import {
 import Link from 'next/link'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
+import usePreventScroll from '@/hooks/usePreventScroll'
 
 // 2025 Animations
 const fadeInUp = {
@@ -81,21 +82,8 @@ export default function HomePage() {
 
   const { addToCart } = useCart()
 
-  // Modal scroll lock - minimal approach
-  useEffect(() => {
-    if (selectedProduct) {
-      document.body.style.overflow = 'hidden'
-      document.body.style.position = 'relative'
-    } else {
-      document.body.style.overflow = ''
-      document.body.style.position = ''
-    }
-
-    return () => {
-      document.body.style.overflow = ''
-      document.body.style.position = ''
-    }
-  }, [selectedProduct])
+  // iOS Safari uyumlu scroll lock
+  usePreventScroll(!!selectedProduct)
 
   // Mobile detection
   useEffect(() => {
@@ -1126,24 +1114,27 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Product Detail Modal - Simple */}
+      {/* Product Detail Modal - Optimized */}
       <AnimatePresence>
         {selectedProduct && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.15 }}
+            transition={{ duration: 0.2 }}
             onClick={closeModal}
             className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4"
           >
             <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 10 }}
-              transition={{ duration: 0.15 }}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ 
+                duration: 0.25,
+                ease: [0.25, 0.1, 0.25, 1] // Custom easing
+              }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-xl"
+              className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-xl relative"
             >
               <div className="relative h-64 md:h-96 bg-gray-50">
                 <SafeImage
