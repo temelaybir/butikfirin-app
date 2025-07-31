@@ -35,6 +35,8 @@ interface HeroBanner {
   button_link?: string
   alt_text?: string
   is_active: boolean
+  is_raw_image: boolean
+  show_on_mobile: boolean
   display_order: number
   created_at: string
   updated_at: string
@@ -163,6 +165,8 @@ export default function HeroBannersPage() {
             position: 'main',
             image_url: '',
             is_active: true,
+            is_raw_image: false,
+            show_on_mobile: true,
             display_order: 0,
             created_at: '',
             updated_at: ''
@@ -237,6 +241,8 @@ export default function HeroBannersPage() {
                         <p><strong>Link:</strong> {banner.button_link}</p>
                       )}
                       <p><strong>Durum:</strong> {banner.is_active ? 'Aktif' : 'Pasif'}</p>
+                      <p><strong>Ham Görsel:</strong> {banner.is_raw_image ? 'Evet' : 'Hayır'}</p>
+                      <p><strong>Mobilde Göster:</strong> {banner.show_on_mobile ? 'Evet' : 'Hayır'}</p>
                     </div>
                   </div>
                 ) : (
@@ -253,6 +259,8 @@ export default function HeroBannersPage() {
                           position: position as 'main' | 'side1' | 'side2',
                           image_url: '',
                           is_active: true,
+                          is_raw_image: false,
+                          show_on_mobile: true,
                           display_order: 0,
                           created_at: '',
                           updated_at: ''
@@ -309,6 +317,16 @@ export default function HeroBannersPage() {
 
               <div>
                 <Label>Görsel</Label>
+                <div className="mb-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <p className="text-sm text-blue-700 font-medium mb-1">📋 Görsel Gereklilikleri:</p>
+                  <ul className="text-xs text-blue-600 space-y-1">
+                    <li>• <strong>Ana Banner:</strong> 1200x600px (2:1 oran) önerilir</li>
+                    <li>• <strong>Yan Banner:</strong> 600x600px (1:1 oran) önerilir</li>
+                    <li>• <strong>Format:</strong> JPG, PNG, WebP</li>
+                    <li>• <strong>Boyut:</strong> Maksimum 5MB</li>
+                    <li>• <strong>Kalite:</strong> Yüksek çözünürlük tercih edilir</li>
+                  </ul>
+                </div>
                 {editingBanner.image_url && (
                   <div className="mb-2">
                     <img
@@ -321,7 +339,7 @@ export default function HeroBannersPage() {
                 <div className="flex gap-2">
                   <Input
                     type="file"
-                    accept="image/*"
+                    accept="image/jpeg,image/jpg,image/png,image/webp"
                     onChange={async (e) => {
                       const file = e.target.files?.[0]
                       if (file) {
@@ -401,15 +419,45 @@ export default function HeroBannersPage() {
                 />
               </div>
 
-              <div className="flex items-center space-x-2">
-                <Switch
-                  checked={editingBanner.is_active}
-                  onCheckedChange={(checked) => setEditingBanner({
-                    ...editingBanner,
-                    is_active: checked
-                  })}
-                />
-                <Label>Aktif</Label>
+              <div className="space-y-4">
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    checked={editingBanner.is_active}
+                    onCheckedChange={(checked) => setEditingBanner({
+                      ...editingBanner,
+                      is_active: checked
+                    })}
+                  />
+                  <Label>Aktif</Label>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    checked={editingBanner.is_raw_image}
+                    onCheckedChange={(checked) => setEditingBanner({
+                      ...editingBanner,
+                      is_raw_image: checked
+                    })}
+                  />
+                  <div>
+                    <Label>Ham Görsel</Label>
+                    <p className="text-xs text-gray-500">Text overlay olmadan sadece görsel gösterir</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    checked={editingBanner.show_on_mobile}
+                    onCheckedChange={(checked) => setEditingBanner({
+                      ...editingBanner,
+                      show_on_mobile: checked
+                    })}
+                  />
+                  <div>
+                    <Label>Mobilde Göster</Label>
+                    <p className="text-xs text-gray-500">Banner mobil cihazlarda görünür olsun</p>
+                  </div>
+                </div>
               </div>
             </div>
           )}

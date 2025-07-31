@@ -96,7 +96,13 @@ export default function HomePage() {
         }
         
         banners.forEach((banner: any) => {
-          if (banner.is_active && bannerMap[banner.position] === null) {
+          // Mobile kontrolü
+          const isMobile = window.innerWidth < 768
+          const shouldShow = banner.is_active && 
+                           (!isMobile || banner.show_on_mobile !== false) &&
+                           bannerMap[banner.position] === null
+          
+          if (shouldShow) {
             bannerMap[banner.position] = banner
           }
         })
@@ -352,8 +358,10 @@ export default function HomePage() {
                       alt={heroBanners.main.alt_text || "Ana Banner"}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                    {(heroBanners.main.title || heroBanners.main.button_text) && (
+                    {!heroBanners.main.is_raw_image && (
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                    )}
+                    {!heroBanners.main.is_raw_image && (heroBanners.main.title || heroBanners.main.button_text) && (
                       <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-6 lg:p-8">
                         {heroBanners.main.title && (
                           <h2 className="text-lg sm:text-2xl lg:text-4xl font-bold text-white mb-1 sm:mb-2">
@@ -400,8 +408,10 @@ export default function HomePage() {
                         alt={heroBanners.side1.alt_text || "Yan Banner 1"}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                      {(heroBanners.side1.title || heroBanners.side1.button_text) && (
+                      {!heroBanners.side1.is_raw_image && (
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                      )}
+                      {!heroBanners.side1.is_raw_image && (heroBanners.side1.title || heroBanners.side1.button_text) && (
                         <div className="absolute bottom-0 left-0 right-0 p-2 sm:p-4">
                           {heroBanners.side1.title && (
                             <h3 className="text-sm sm:text-lg lg:text-xl font-bold text-white mb-1">
@@ -444,8 +454,10 @@ export default function HomePage() {
                         alt={heroBanners.side2.alt_text || "Yan Banner 2"}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                      {(heroBanners.side2.title || heroBanners.side2.button_text) && (
+                      {!heroBanners.side2.is_raw_image && (
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                      )}
+                      {!heroBanners.side2.is_raw_image && (heroBanners.side2.title || heroBanners.side2.button_text) && (
                         <div className="absolute bottom-0 left-0 right-0 p-2 sm:p-4">
                           {heroBanners.side2.title && (
                             <h3 className="text-sm sm:text-lg lg:text-xl font-bold text-white mb-1">
