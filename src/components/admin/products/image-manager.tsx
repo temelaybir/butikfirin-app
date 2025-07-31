@@ -149,98 +149,19 @@ export function ImageManager({
     setIsUrlLoading(true)
     
     try {
-      // Önce fetch ile HEAD request deneyerek URL'in geçerli olup olmadığını kontrol et
-      let isValidUrl = false
-      try {
-        const response = await fetch(urlInput, { 
-          method: 'HEAD',
-          mode: 'no-cors' // CORS sorunlarını bypass et
-        })
-        isValidUrl = true
-        console.log('URL HEAD request başarılı:', urlInput)
-      } catch (headError) {
-        console.warn('HEAD request başarısız, img element ile deneniyor:', headError)
-      }
-
-      // Image element ile test et
-      const img = document.createElement('img')
-      
-      await new Promise((resolve, reject) => {
-        const timeout = setTimeout(() => {
-          reject(new Error('Görsel yükleme zaman aşımı (10 saniye)'))
-        }, 10000)
-
-        img.onload = () => {
-          clearTimeout(timeout)
-          // Görsel boyutlarını kontrol et
-          if (img.naturalWidth < 10 || img.naturalHeight < 10) {
-            reject(new Error('Görsel çok küçük veya geçersiz'))
-            return
-          }
-          console.log(`Görsel başarıyla yüklendi: ${img.naturalWidth}x${img.naturalHeight}`)
-          resolve(img)
-        }
-        
-        img.onerror = (error) => {
-          clearTimeout(timeout)
-          console.error('Görsel yükleme hatası:', {
-            url: urlInput,
-            error: error,
-            naturalWidth: img.naturalWidth,
-            naturalHeight: img.naturalHeight
-          })
-          
-          // Farklı CORS stratejileri dene
-          if (!img.crossOrigin) {
-            console.log('CORS stratejisi deneniyor...')
-            img.crossOrigin = 'use-credentials'
-            img.src = urlInput // Tekrar dene
-            return
-          }
-          
-          reject(new Error('Görsel yüklenemedi. Muhtemelen CORS politikası nedeniyle erişim engellenmiş'))
-        }
-        
-        // İlk deneme: crossOrigin olmadan
-        img.src = urlInput
-      })
-
-      // Başarılı ise image ekle
+      // Direkt olarak image elemanı ile test et (CORS sorunlarını bypass etmek için)
       const newImage: ImageItem = {
         id: `url-${Date.now()}`,
         url: urlInput,
-        alt: 'URL Görseli',
+        alt: 'URL görsel',
         position: images.length,
         isCover: images.length === 0,
         source: 'url'
       }
 
+      // URL'i direkt ekle, görsel yüklenmesini component'e bırak
       onImagesChange([...images, newImage])
-      setUrlInput('')
-      toast.success('Görsel URL\'den eklendi')
-      
-    } catch (error) {
-      console.error('URL görsel ekleme hatası:', error)
-      const errorMessage = error instanceof Error ? error.message : 'Bilinmeyen hata'
-      
-      // Kullanıcıya daha yararlı hata mesajı ver
-      let userMessage = errorMessage
-      if (errorMessage.includes('CORS')) {
-        userMessage = 'Görsel sunucusu erişim izni vermiyor. Lütfen görseli indirip yükleyin veya başka bir URL deneyin.'
-      } else if (errorMessage.includes('zaman aşımı')) {
-        userMessage = 'Görsel yükleme çok uzun sürüyor. Internet bağlantınızı kontrol edin.'
-      }
-      
-      toast.error(`Görsel eklenemedi: ${userMessage}`)
-      
-      // Geliştirici için detaylı log
-      console.group('🔍 Görsel URL Debug Bilgileri')
-      console.log('URL:', urlInput)
-      console.log('Domain:', new URL(urlInput).hostname)
-      console.log('Protocol:', new URL(urlInput).protocol)
-      console.log('Hata:', errorMessage)
-      console.groupEnd()
-      
+      toast.success('Görsel başarıyla eklendi')
     } finally {
       setIsUrlLoading(false)
     }

@@ -53,27 +53,39 @@ export function ImageUpload({
       return
     }
 
-    // Görsel boyut kontrolü
-    const img = new Image()
-    img.onload = () => {
-      if (img.width !== requirements.width || img.height !== requirements.height) {
-        setError(`Görsel boyutu ${requirements.width}x${requirements.height}px olmalıdır. Mevcut: ${img.width}x${img.height}px`)
-        return
-      }
+    // Önizleme için önce dosyayı oku
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      const url = e.target?.result as string
       
-      // Başarılı
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        const url = e.target?.result as string
+      // Görsel boyut kontrolü için yeni bir Image oluştur
+      const img = new Image()
+      img.onload = () => {
+        // Boyut kontrolünü opsiyonel yap - sadece uyarı ver
+        if (img.width !== requirements.width || img.height !== requirements.height) {
+          console.warn(`Önerilen görsel boyutu ${requirements.width}x${requirements.height}px. Yüklenen: ${img.width}x${img.height}px`)
+          // Hata verme, sadece devam et
+        }
+        
+        // Başarılı - önizleme URL'i ve onChange callback'i güncelle
         setPreviewUrl(url)
         onChange(url)
       }
-      reader.readAsDataURL(file)
+      
+      img.onerror = () => {
+        setError('Geçersiz görsel dosyası')
+      }
+      
+      // Base64 URL'i Image src'ye ata
+      img.src = url
     }
-    img.onerror = () => {
-      setError('Geçersiz görsel dosyası')
+    
+    reader.onerror = () => {
+      setError('Dosya okuma hatası')
     }
-    img.src = URL.createObjectURL(file)
+    
+    // Dosyayı DataURL olarak oku
+    reader.readAsDataURL(file)
   }
 
   const handleDrop = (e: React.DragEvent) => {
@@ -105,7 +117,13 @@ export function ImageUpload({
 
   const handleUrlChange = (url: string) => {
     setError(null)
-    setPreviewUrl(url)
+    if (url.trim()) {
+      // URL'i hem preview hem de parent'a gönder
+      setPreviewUrl(url)
+    } else {
+      // URL boşsa preview'ı temizle
+      setPreviewUrl(null)
+    }
     onChange(url)
   }
 
@@ -229,19 +247,6 @@ export function ImageUpload({
         </Alert>
       )}
 
-      {/* Önizleme (URL için) */}
-      {value && !previewUrl && !error && (
-        <div className="space-y-2">
-          <p className="text-xs font-medium">Önizleme:</p>
-          <SafeImage
-            src={value}
-            alt="URL Önizleme"
-            width={requirements.width}
-            height={requirements.height}
-            className="w-full max-w-xs h-auto rounded-md object-cover"
-          />
-        </div>
-      )}
     </div>
   )
 } 
