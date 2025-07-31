@@ -17,7 +17,7 @@ const nextConfig: NextConfig = {
   // Static exports için
   output: process.env.NODE_ENV === 'production' ? undefined : undefined,
   trailingSlash: false,
-  
+
   // Image optimization
   images: {
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
@@ -175,7 +175,7 @@ const nextConfig: NextConfig = {
 
   // Performance optimizations
   swcMinify: true,
-  
+
   // Compiler seçenekleri
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production' ? {

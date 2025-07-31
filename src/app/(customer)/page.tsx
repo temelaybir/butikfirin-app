@@ -310,57 +310,41 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Hero Section - Dynamic Banner Layout */}
+      {/* Hero Section - Hero Büyük + 2 Küçük Banner Alt Alta */}
       {heroSlides.length > 0 && (
         <section className="container mx-auto px-4 py-4 sm:py-6">
           <div className="max-w-7xl mx-auto">
-            {/* Dynamic grid based on number of slides */}
-            <div className={cn(
-              "grid gap-4",
-              heroSlides.length === 1 ? "grid-cols-1" :
-                heroSlides.length === 2 ? "grid-cols-1 md:grid-cols-2" :
-                  heroSlides.length === 3 ? "grid-cols-1 md:grid-cols-3" :
-                    "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
-            )}>
-              {heroSlides.map((slide, index) => (
-                <div
-                  key={slide.id}
-                  className={cn(
-                    "relative rounded-lg overflow-hidden group bg-gray-100 flex items-center justify-center",
-                    heroSlides.length === 1 ? "h-[300px] sm:h-[400px]" :
-                      heroSlides.length === 2 ? "h-[250px] sm:h-[350px]" :
-                        "h-[200px] sm:h-[300px]"
-                  )}
-                >
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+              {/* Sol: Hero Büyük Banner */}
+              <div className="lg:col-span-2">
+                <div className="relative rounded-lg overflow-hidden group bg-gray-100 h-[300px] sm:h-[400px] lg:h-[500px] flex items-center justify-center">
                   {/* Desktop Image */}
                   <img
-                    src={slide.image_url}
-                    alt={slide.title}
-                    className="hidden sm:block w-full h-full object-contain transition-transform duration-700 group-hover:scale-105"
-                    style={{ maxWidth: '100%', maxHeight: '100%' }}
+                    src={heroSlides[0]?.image_url}
+                    alt={heroSlides[0]?.title || 'Hero Banner'}
+                    className="hidden sm:block w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                   {/* Mobile Image */}
                   <img
-                    src={slide.mobile_image_url || slide.image_url}
-                    alt={slide.title}
-                    className="block sm:hidden w-full h-full object-contain transition-transform duration-700"
-                    style={{ maxWidth: '100%', maxHeight: '100%' }}
+                    src={heroSlides[0]?.mobile_image_url || heroSlides[0]?.image_url}
+                    alt={heroSlides[0]?.title || 'Hero Banner'}
+                    className="block sm:hidden w-full h-full object-cover transition-transform duration-700"
                   />
-                  {!slide.is_raw_image && (
+                  {heroSlides[0] && !heroSlides[0].is_raw_image && (
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent pointer-events-none">
                       <div className="absolute bottom-0 left-0 p-4 sm:p-6 pointer-events-auto">
                         <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white mb-1 sm:mb-2 select-text">
-                          {slide.title}
+                          {heroSlides[0].title}
                         </h3>
-                        {slide.subtitle && (
+                        {heroSlides[0].subtitle && (
                           <p className="text-sm sm:text-base lg:text-lg text-white/90 mb-2 sm:mb-3 select-text">
-                            {slide.subtitle}
+                            {heroSlides[0].subtitle}
                           </p>
                         )}
-                        {slide.button_text && slide.link_url && (
-                          <Link href={slide.link_url}>
+                        {heroSlides[0].button_text && heroSlides[0].link_url && (
+                          <Link href={heroSlides[0].link_url}>
                             <Button className="bg-orange-500 hover:bg-orange-600 text-white px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm rounded font-semibold shadow-lg hover:shadow-xl transition-all">
-                              {slide.button_text}
+                              {heroSlides[0].button_text}
                             </Button>
                           </Link>
                         )}
@@ -368,8 +352,140 @@ export default function HomePage() {
                     </div>
                   )}
                 </div>
-              ))}
+              </div>
+
+              {/* Sağ: 2 Küçük Banner Alt Alta */}
+              <div className="lg:col-span-1 space-y-4">
+                {heroSlides.slice(1, 3).map((slide, index) => (
+                  <div
+                    key={slide.id}
+                    className="relative rounded-lg overflow-hidden group bg-gray-100 h-[200px] sm:h-[240px] flex items-center justify-center"
+                  >
+                    {/* Desktop Image */}
+                    <img
+                      src={slide.image_url}
+                      alt={slide.title}
+                      className="hidden sm:block w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                    {/* Mobile Image */}
+                    <img
+                      src={slide.mobile_image_url || slide.image_url}
+                      alt={slide.title}
+                      className="block sm:hidden w-full h-full object-cover transition-transform duration-700"
+                    />
+                    {!slide.is_raw_image && (
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent pointer-events-none">
+                        <div className="absolute bottom-0 left-0 p-3 sm:p-4 pointer-events-auto">
+                          <h3 className="text-lg sm:text-xl font-bold text-white mb-1 select-text">
+                            {slide.title}
+                          </h3>
+                          {slide.subtitle && (
+                            <p className="text-sm text-white/90 mb-2 select-text">
+                              {slide.subtitle}
+                            </p>
+                          )}
+                          {slide.button_text && slide.link_url && (
+                            <Link href={slide.link_url}>
+                              <Button className="bg-orange-500 hover:bg-orange-600 text-white px-3 py-1.5 text-xs rounded font-semibold shadow-lg hover:shadow-xl transition-all">
+                                {slide.button_text}
+                              </Button>
+                            </Link>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
+
+            {/* Alt Kısım: 2 Küçük Banner + Hero Büyük (Eğer 4+ banner varsa) */}
+            {heroSlides.length >= 4 && (
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4">
+                {/* Sol: 2 Küçük Banner Alt Alta */}
+                <div className="lg:col-span-1 space-y-4">
+                  {heroSlides.slice(3, 5).map((slide, index) => (
+                    <div
+                      key={slide.id}
+                      className="relative rounded-lg overflow-hidden group bg-gray-100 h-[200px] sm:h-[240px] flex items-center justify-center"
+                    >
+                      {/* Desktop Image */}
+                      <img
+                        src={slide.image_url}
+                        alt={slide.title}
+                        className="hidden sm:block w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                      {/* Mobile Image */}
+                      <img
+                        src={slide.mobile_image_url || slide.image_url}
+                        alt={slide.title}
+                        className="block sm:hidden w-full h-full object-cover transition-transform duration-700"
+                      />
+                      {!slide.is_raw_image && (
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent pointer-events-none">
+                          <div className="absolute bottom-0 left-0 p-3 sm:p-4 pointer-events-auto">
+                            <h3 className="text-lg sm:text-xl font-bold text-white mb-1 select-text">
+                              {slide.title}
+                            </h3>
+                            {slide.subtitle && (
+                              <p className="text-sm text-white/90 mb-2 select-text">
+                                {slide.subtitle}
+                              </p>
+                            )}
+                            {slide.button_text && slide.link_url && (
+                              <Link href={slide.link_url}>
+                                <Button className="bg-orange-500 hover:bg-orange-600 text-white px-3 py-1.5 text-xs rounded font-semibold shadow-lg hover:shadow-xl transition-all">
+                                  {slide.button_text}
+                                </Button>
+                              </Link>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Sağ: Hero Büyük Banner */}
+                <div className="lg:col-span-2">
+                  <div className="relative rounded-lg overflow-hidden group bg-gray-100 h-[300px] sm:h-[400px] lg:h-[500px] flex items-center justify-center">
+                    {/* Desktop Image */}
+                    <img
+                      src={heroSlides[5]?.image_url}
+                      alt={heroSlides[5]?.title || 'Hero Banner'}
+                      className="hidden sm:block w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                    {/* Mobile Image */}
+                    <img
+                      src={heroSlides[5]?.mobile_image_url || heroSlides[5]?.image_url}
+                      alt={heroSlides[5]?.title || 'Hero Banner'}
+                      className="block sm:hidden w-full h-full object-cover transition-transform duration-700"
+                    />
+                    {heroSlides[5] && !heroSlides[5].is_raw_image && (
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent pointer-events-none">
+                        <div className="absolute bottom-0 left-0 p-4 sm:p-6 pointer-events-auto">
+                          <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white mb-1 sm:mb-2 select-text">
+                            {heroSlides[5].title}
+                          </h3>
+                          {heroSlides[5].subtitle && (
+                            <p className="text-sm sm:text-base lg:text-lg text-white/90 mb-2 sm:mb-3 select-text">
+                              {heroSlides[5].subtitle}
+                            </p>
+                          )}
+                          {heroSlides[5].button_text && heroSlides[5].link_url && (
+                            <Link href={heroSlides[5].link_url}>
+                              <Button className="bg-orange-500 hover:bg-orange-600 text-white px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm rounded font-semibold shadow-lg hover:shadow-xl transition-all">
+                                {heroSlides[5].button_text}
+                              </Button>
+                            </Link>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </section>
       )}
@@ -769,7 +885,7 @@ export default function HomePage() {
                           {slide.title}
                         </h3>
                         {slide.subtitle && (
-                          <p className="text-xs sm:text-sm text-white/90 mb-2 select-text">
+                          <p className="text-sm text-white/90 mb-2 select-text">
                             {slide.subtitle}
                           </p>
                         )}
