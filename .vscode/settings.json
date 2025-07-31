@@ -1,0 +1,73 @@
+{
+  "workbench.colorTheme": "Dark+ (default dark)",
+  "editor.fontSize": 14,
+  "editor.fontFamily": "Fira Code, Consolas, 'Courier New', monospace",
+  "editor.fontLigatures": true,
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "editor.detectIndentation": false,
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "explicit"
+  },
+  
+  // Proje Özel Ayarlar
+  "files.associations": {
+    "*.tsx": "typescriptreact",
+    "*.ts": "typescript",
+    "*.css": "css"
+  },
+  
+  // Next.js ve React ayarları
+  "typescript.preferences.includePackageJsonAutoImports": "auto",
+  "typescript.suggest.autoImports": true,
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  
+  // Tailwind CSS IntelliSense
+  "tailwindCSS.includeLanguages": {
+    "typescript": "typescript",
+    "typescriptreact": "typescriptreact"
+  },
+  "tailwindCSS.experimental.classRegex": [
+    ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
+    ["cx\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
+  ],
+  
+  // Butik Fırın Projesi Özel Ayarları
+  "project.name": "Butik Fırın E-Ticaret",
+  "project.type": "NextJS + TypeScript",
+  "project.database": "LOCAL_DEVELOPMENT", 
+  "project.theme": "Pastane/Fırın Teması",
+  
+  // Dosya Hariç Tutmalar
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/.git": true,
+    "**/.next": true,
+    "**/dist": true,
+    "**/.env.local": true
+  },
+  
+  // Search Exclude
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/.next": true,
+    "**/dist": true
+  },
+  
+  // Emmet ayarları
+  "emmet.includeLanguages": {
+    "typescript": "html",
+    "typescriptreact": "html"
+  },
+  
+  // Git ayarları
+  "git.enableSmartCommit": true,
+  "git.confirmSync": false,
+  
+  // Terminal ayarları
+  "terminal.integrated.defaultProfile.windows": "Command Prompt",
+  "terminal.integrated.fontSize": 13
+} 

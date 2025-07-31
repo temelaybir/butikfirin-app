@@ -1,0 +1,65 @@
+{
+  "project": {
+    "name": "Butik Fırın E-Ticaret",
+    "type": "e-commerce",
+    "framework": "Next.js 15",
+    "language": "TypeScript",
+    "theme": "Pastane/Fırın",
+    "database": "Supabase PostgreSQL",
+    "version": "1.0.0"
+  },
+  "features": {
+    "categories": [
+      "Kekler & Muffinler",
+      "Kurabiyeler",
+      "Pastalar",
+      "Tatlılar",
+      "Ekmekler",
+      "İçecekler",
+      "Börekler & Tuzlular",
+      "Özel Siparişler"
+    ],
+    "payment": [
+      "Kredi Kartı",
+      "Kapıda Ödeme",
+      "Havale/EFT"
+    ],
+    "shipping": [
+      "Ücretsiz Kargo",
+      "Hızlı Teslimat",
+      "Şehir İçi"
+    ],
+    "admin": true,
+    "mobile_responsive": true,
+    "dark_mode": true
+  },
+  "development": {
+    "port": 3001,
+    "database": "supabase",
+    "hot_reload": true,
+    "debug": true
+  },
+  "database": {
+    "type": "supabase",
+    "project_id": "gmnqsaqdcpwoxwxxpkkj",
+    "url": "https://gmnqsaqdcpwoxwxxpkkj.supabase.co",
+    "backup": "./backups/",
+    "migrations": "supabase/migrations/"
+  },
+  "uploads": {
+    "directory": "./public/uploads/",
+    "max_size": "5MB",
+    "allowed_types": [
+      "image/jpeg",
+      "image/png",
+      "image/webp"
+    ]
+  },
+  "mcp_servers": {
+    "note": "Bu proje Ardahan Ticaret'ten ayrı, kendi MCP server'larını kullanır",
+    "database_mcp": "supabase_mcp",
+    "file_mcp": "desktop_commander_mcp",
+    "butik_firin_mcp": "custom_mcp",
+    "excluded": []
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rm:*)",
+      "Bash(npm run dev:*)",
+      "Bash(grep:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(curl:*)",
+      "Bash(npm install:*)",
+      "Bash(mkdir:*)",
+      "WebFetch(domain:www.starbucks.com.tr)",
+      "Bash(touch:*)",
+      "Bash(npx next:*)",
+      "WebFetch(domain:www.thenordroom.com)",
+      "Bash(cp:*)",
+      "Bash(npm run build:*)",
+      "Bash(ls:*)",
+      "Bash(taskkill:*)",
+      "Bash(pkill:*)",
+      "Bash(npm cache clean:*)"
+    ],
+    "deny": []
+  }
+}

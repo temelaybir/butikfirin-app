@@ -1,0 +1,232 @@
+{
+  "name": "butik-firin-mcp",
+  "version": "1.0.0",
+  "description": "Butik Fırın E-Ticaret projesine özel MCP server",
+  "author": "Butik Fırın Ekibi",
+  "license": "Private",
+  "server": {
+    "project_root": "E:\\butikfirin-app",
+    "database": {
+      "type": "sqlite",
+      "path": "./dev.db",
+      "backup_path": "./backups/",
+      "auto_backup": true
+    },
+    "uploads": {
+      "directory": "./public/uploads/",
+      "max_size": "5MB",
+      "allowed_types": [
+        "image/jpeg",
+        "image/png",
+        "image/webp"
+      ]
+    }
+  },
+  "tools": {
+    "database": {
+      "enabled": true,
+      "operations": [
+        "bakery_get_categories",
+        "bakery_get_products",
+        "bakery_add_product",
+        "bakery_update_product",
+        "bakery_delete_product",
+        "bakery_get_orders",
+        "bakery_update_order_status"
+      ]
+    },
+    "content": {
+      "enabled": true,
+      "operations": [
+        "bakery_generate_product_description",
+        "bakery_suggest_pricing",
+        "bakery_validate_product_data",
+        "bakery_export_menu"
+      ]
+    },
+    "file_management": {
+      "enabled": true,
+      "operations": [
+        "bakery_upload_product_image",
+        "bakery_resize_image",
+        "bakery_optimize_image",
+        "bakery_backup_database"
+      ]
+    },
+    "analytics": {
+      "enabled": true,
+      "operations": [
+        "bakery_get_sales_report",
+        "bakery_get_popular_products",
+        "bakery_get_customer_stats"
+      ]
+    }
+  },
+  "business_logic": {
+    "categories": [
+      {
+        "id": "kekler-muffinler",
+        "name": "Kekler & Muffinler",
+        "description": "Ev yapımı kekler, cupcakeler ve nefis muffinler",
+        "price_range": [
+          15,
+          50
+        ],
+        "typical_products": [
+          "brownie",
+          "cupcake",
+          "muffin",
+          "kek"
+        ]
+      },
+      {
+        "id": "kurabiyeler",
+        "name": "Kurabiyeler",
+        "description": "Çıtır çıtır kurabiyeler ve bisküviler",
+        "price_range": [
+          20,
+          40
+        ],
+        "typical_products": [
+          "tereyağlı kurabiye",
+          "cookie",
+          "bisküvi"
+        ]
+      },
+      {
+        "id": "pastalar",
+        "name": "Pastalar",
+        "description": "Özel günler için muhteşem pastalar",
+        "price_range": [
+          100,
+          500
+        ],
+        "typical_products": [
+          "doğum günü pastası",
+          "yaş pasta",
+          "tiramisu"
+        ]
+      },
+      {
+        "id": "tatlilar",
+        "name": "Tatlılar",
+        "description": "Geleneksel ve modern tatlılar",
+        "price_range": [
+          15,
+          45
+        ],
+        "typical_products": [
+          "sütlaç",
+          "kazandibi",
+          "profiterol"
+        ]
+      },
+      {
+        "id": "ekmekler",
+        "name": "Ekmekler",
+        "description": "Taze günlük ekmekler ve poğaçalar",
+        "price_range": [
+          5,
+          25
+        ],
+        "typical_products": [
+          "ekmek",
+          "poğaça",
+          "simit"
+        ]
+      },
+      {
+        "id": "icecekler",
+        "name": "İçecekler",
+        "description": "Taze sıkılmış meyve suları ve kahveler",
+        "price_range": [
+          10,
+          30
+        ],
+        "typical_products": [
+          "kahve",
+          "çay",
+          "meyve suyu"
+        ]
+      },
+      {
+        "id": "borekler-tuzlular",
+        "name": "Börekler & Tuzlular",
+        "description": "El açması börekler ve tuzlu atıştırmalıklar",
+        "price_range": [
+          12,
+          35
+        ],
+        "typical_products": [
+          "su böreği",
+          "sigara böreği",
+          "açma"
+        ]
+      },
+      {
+        "id": "ozel-siparisler",
+        "name": "Özel Siparişler",
+        "description": "Doğum günü ve özel etkinlik siparişleri",
+        "price_range": [
+          150,
+          1000
+        ],
+        "typical_products": [
+          "özel pasta",
+          "event catering",
+          "toplu sipariş"
+        ]
+      }
+    ],
+    "pricing_rules": {
+      "markup_percentage": 40,
+      "minimum_profit_margin": 25,
+      "bulk_discount_threshold": 10,
+      "special_order_markup": 25
+    },
+    "inventory_rules": {
+      "low_stock_threshold": 5,
+      "auto_reorder": false,
+      "daily_production_items": [
+        "ekmek",
+        "poğaça",
+        "simit"
+      ],
+      "weekly_production_items": [
+        "kek",
+        "kurabiye"
+      ]
+    }
+  },
+  "development": {
+    "debug": true,
+    "log_level": "info",
+    "hot_reload": true,
+    "test_mode": true
+  },
+  "security": {
+    "admin_only_operations": [
+      "bakery_delete_product",
+      "bakery_backup_database",
+      "bakery_export_menu"
+    ],
+    "rate_limiting": {
+      "enabled": true,
+      "requests_per_minute": 60
+    }
+  },
+  "integrations": {
+    "whatsapp": {
+      "enabled": false,
+      "auto_order_notifications": true
+    },
+    "email": {
+      "enabled": false,
+      "order_confirmations": true
+    },
+    "sms": {
+      "enabled": false,
+      "delivery_notifications": true
+    }
+  }
+}
