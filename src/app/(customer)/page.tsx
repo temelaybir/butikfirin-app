@@ -81,19 +81,19 @@ export default function HomePage() {
 
   const { addToCart } = useCart()
 
-  // Modal body scroll lock
+  // Modal body scroll lock - simplified
   useEffect(() => {
     if (selectedProduct) {
-      // Prevent body scroll when modal is open
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth
       document.body.style.overflow = 'hidden'
-      document.body.style.paddingRight = '0px' // Prevent layout shift
+      if (scrollbarWidth > 0) {
+        document.body.style.paddingRight = `${scrollbarWidth}px`
+      }
     } else {
-      // Restore body scroll when modal is closed
       document.body.style.overflow = ''
       document.body.style.paddingRight = ''
     }
 
-    // Cleanup on unmount
     return () => {
       document.body.style.overflow = ''
       document.body.style.paddingRight = ''
@@ -1130,34 +1130,23 @@ export default function HomePage() {
       </section>
 
       {/* Product Detail Modal - Trendyol Style */}
-      <AnimatePresence mode="wait">
+      <AnimatePresence>
         {selectedProduct && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2, ease: "easeInOut" }}
+            transition={{ duration: 0.15 }}
             onClick={closeModal}
             className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4"
-            style={{ 
-              willChange: 'opacity',
-              backfaceVisibility: 'hidden',
-              WebkitBackfaceVisibility: 'hidden'
-            }}
           >
             <motion.div
-              initial={{ scale: 0.96, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.96, opacity: 0, y: 20 }}
-              transition={{ duration: 0.2, ease: "easeInOut" }}
+              initial={{ scale: 0.98, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.98, opacity: 0 }}
+              transition={{ duration: 0.15 }}
               onClick={(e) => e.stopPropagation()}
               className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-xl"
-              style={{ 
-                willChange: 'transform, opacity',
-                backfaceVisibility: 'hidden',
-                WebkitBackfaceVisibility: 'hidden',
-                transform3d: 'translateZ(0)'
-              }}
             >
               <div className="relative h-64 md:h-96 bg-gray-50">
                 <SafeImage
@@ -1169,11 +1158,6 @@ export default function HomePage() {
                 <button
                   onClick={closeModal}
                   className="absolute top-4 right-4 bg-white rounded-full p-2 shadow-md hover:shadow-lg transition-all"
-                  style={{
-                    willChange: 'transform',
-                    backfaceVisibility: 'hidden',
-                    WebkitBackfaceVisibility: 'hidden'
-                  }}
                 >
                   <X className="w-5 h-5 text-gray-700" />
                 </button>
