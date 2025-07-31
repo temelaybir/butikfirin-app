@@ -37,6 +37,7 @@ import { toast } from 'sonner'
 import type { Category } from '@/app/actions/admin/category-actions'
 import { getCategories, createCategory, updateCategory, generateSlug as generateSlugAction } from '@/app/actions/admin/category-actions'
 import { useActionHandler } from '@/hooks/use-action-handler'
+import { ImageUpload } from '@/components/admin/image-upload'
 
 const formSchema = z.object({
   name: z.string().min(2, 'Kategori adı en az 2 karakter olmalıdır'),
@@ -383,76 +384,30 @@ export function CategoryForm({ category, onSuccess, onCancel, onError }: Categor
                     name="imageUrl"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Görsel URL (Manuel)</FormLabel>
+                        <FormLabel>Kategori Görseli</FormLabel>
                         <FormControl>
-                          <Input 
-                            placeholder="https://ornek.com/gorsel.jpg"
-                            {...field}
-                            onChange={(e) => {
-                              field.onChange(e)
-                              handleImageUrlChange(e.target.value)
+                          <ImageUpload
+                            value={field.value}
+                            onChange={(url) => {
+                              field.onChange(url)
+                              handleImageUrlChange(url)
                             }}
+                            title="Kategori Görseli"
+                            description="Kategori için görsel seçin"
+                            requirements={{
+                              width: 400,
+                              height: 300,
+                              maxSize: 1,
+                              formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                              aspectRatio: '4:3'
+                            }}
+                            placeholder="https://ornek.com/kategori-gorsel.jpg"
                           />
                         </FormControl>
-                        <FormDescription>
-                          Görsel URL'sini doğrudan girebilir veya aşağıdan dosya yükleyebilirsiniz
-                        </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-
-                  {imagePreview ? (
-                    <div className="relative w-full h-48 bg-gray-100 rounded-lg overflow-hidden">
-                      {imagePreview && imagePreview.trim() !== '' ? (
-                        <SafeImage
-                          src={imagePreview}
-                          alt="Kategori görseli"
-                          className="w-full h-full object-cover"
-                          fill
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <ImagePlus className="h-12 w-12 text-gray-400" />
-                          <span className="ml-2 text-gray-500">Görsel Yok</span>
-                        </div>
-                      )}
-                      <Button
-                        type="button"
-                        variant="destructive"
-                        size="icon"
-                        className="absolute top-2 right-2"
-                        onClick={() => {
-                          setImagePreview(null)
-                          form.setValue('imageUrl', '')
-                        }}
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                      <ImagePlus className="mx-auto h-12 w-12 text-gray-400" />
-                      <div className="mt-4">
-                        <label htmlFor="image-upload" className="cursor-pointer">
-                          <span className="mt-2 block text-sm font-medium text-gray-900">
-                            Dosya yüklemek için tıklayın
-                          </span>
-                          <input
-                            id="image-upload"
-                            name="image-upload"
-                            type="file"
-                            accept="image/*"
-                            className="sr-only"
-                            onChange={handleImageUpload}
-                          />
-                        </label>
-                      </div>
-                      <p className="mt-2 text-xs text-gray-500">
-                        PNG, JPG, GIF - Maks 2MB
-                      </p>
-                    </div>
-                  )}
                 </div>
               </CardContent>
             </Card>

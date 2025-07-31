@@ -17,6 +17,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { SafeImage } from '@/components/ui/safe-image'
+import { ImageUpload } from '@/components/admin/image-upload'
 import { toast } from 'sonner'
 
 interface HeroSlide {
@@ -331,51 +332,35 @@ export default function HeroSliderAdminPage() {
                 />
               </div>
               
-              <div>
-                <Label htmlFor="image_url">Görsel URL *</Label>
-                <Input
-                  id="image_url"
-                  value={formData.image_url}
-                  onChange={(e) => setFormData(prev => ({ ...prev, image_url: e.target.value }))}
-                  placeholder="/images/hero/hero-1.jpg"
-                />
-                <div className="mt-1 text-xs text-muted-foreground">
-                  Mevcut görseller: /images/hero/hero-1.jpg, /images/hero/hero-2.jpg, /images/hero/hero-3.jpg, /images/hero/menuback.jpg
-                </div>
-                {formData.image_url && (
-                  <div className="mt-2">
-                    <SafeImage
-                      src={formData.image_url}
-                      alt="Önizleme"
-                      width={300}
-                      height={120}
-                      className="rounded-md object-cover"
-                    />
-                  </div>
-                )}
-              </div>
+              <ImageUpload
+                value={formData.image_url}
+                onChange={(url) => setFormData(prev => ({ ...prev, image_url: url }))}
+                title="Ana Görsel *"
+                description="Hero banner için ana görsel"
+                requirements={{
+                  width: 1200,
+                  height: 600,
+                  maxSize: 2,
+                  formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                  aspectRatio: '2:1'
+                }}
+                placeholder="/images/hero/hero-1.jpg"
+              />
               
-              <div>
-                <Label htmlFor="mobile_image_url">Mobil Görsel URL</Label>
-                <Input
-                  id="mobile_image_url"
-                  value={formData.mobile_image_url}
-                  onChange={(e) => setFormData(prev => ({ ...prev, mobile_image_url: e.target.value }))}
-                  placeholder="örn: /images/hero/hero-1-mobile.jpg"
-                />
-                {formData.mobile_image_url && (
-                  <div className="mt-2">
-                    <p className="text-xs text-muted-foreground mb-1">Mobil önizleme:</p>
-                    <SafeImage
-                      src={formData.mobile_image_url}
-                      alt="Mobil Önizleme"
-                      width={150}
-                      height={200}
-                      className="rounded-md object-cover"
-                    />
-                  </div>
-                )}
-              </div>
+              <ImageUpload
+                value={formData.mobile_image_url}
+                onChange={(url) => setFormData(prev => ({ ...prev, mobile_image_url: url }))}
+                title="Mobil Görsel (Opsiyonel)"
+                description="Mobil cihazlar için özel görsel"
+                requirements={{
+                  width: 600,
+                  height: 800,
+                  maxSize: 1,
+                  formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                  aspectRatio: '3:4'
+                }}
+                placeholder="/images/hero/hero-1-mobile.jpg"
+              />
               
               <div>
                 <Label htmlFor="link_url">Link URL</Label>

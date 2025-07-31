@@ -44,6 +44,7 @@ import {
 import { useCurrency } from '@/context/currency-context'
 import { useProductActions } from '@/hooks/use-action-handler'
 import { ImageManager, type ImageItem } from './image-manager'
+import { ImageUpload } from '@/components/admin/image-upload'
 import { toast } from 'sonner'
 
 // Schema tanımlaması
