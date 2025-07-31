@@ -81,46 +81,19 @@ export default function HomePage() {
 
   const { addToCart } = useCart()
 
-  // Modal body scroll lock - iOS Safari optimized
+  // Modal scroll lock - minimal approach
   useEffect(() => {
     if (selectedProduct) {
-      // Store current scroll position
-      const scrollY = window.scrollY
-      
-      // Apply styles to prevent scroll
-      document.body.style.position = 'fixed'
-      document.body.style.top = `-${scrollY}px`
-      document.body.style.width = '100%'
       document.body.style.overflow = 'hidden'
-      
-      // Store scroll position for restoration
-      document.body.setAttribute('data-scroll-y', scrollY.toString())
+      document.body.style.position = 'relative'
     } else {
-      // Restore scroll position
-      const scrollY = document.body.getAttribute('data-scroll-y')
-      
-      document.body.style.position = ''
-      document.body.style.top = ''
-      document.body.style.width = ''
       document.body.style.overflow = ''
-      
-      if (scrollY) {
-        window.scrollTo(0, parseInt(scrollY))
-        document.body.removeAttribute('data-scroll-y')
-      }
+      document.body.style.position = ''
     }
 
     return () => {
-      // Cleanup
-      const scrollY = document.body.getAttribute('data-scroll-y')
-      document.body.style.position = ''
-      document.body.style.top = ''
-      document.body.style.width = ''
       document.body.style.overflow = ''
-      if (scrollY) {
-        window.scrollTo(0, parseInt(scrollY))
-        document.body.removeAttribute('data-scroll-y')
-      }
+      document.body.style.position = ''
     }
   }, [selectedProduct])
 
@@ -1153,39 +1126,24 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Product Detail Modal - iOS Safari Optimized */}
+      {/* Product Detail Modal - Simple */}
       <AnimatePresence>
         {selectedProduct && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
+            transition={{ duration: 0.15 }}
             onClick={closeModal}
             className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4"
-            style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              WebkitOverflowScrolling: 'touch',
-              touchAction: 'none'
-            }}
           >
             <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              transition={{ duration: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 10 }}
+              transition={{ duration: 0.15 }}
               onClick={(e) => e.stopPropagation()}
               className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-xl"
-              style={{
-                WebkitTransform: 'translateZ(0)',
-                transform: 'translateZ(0)',
-                WebkitBackfaceVisibility: 'hidden',
-                backfaceVisibility: 'hidden'
-              }}
             >
               <div className="relative h-64 md:h-96 bg-gray-50">
                 <SafeImage
